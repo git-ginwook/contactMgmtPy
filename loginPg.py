@@ -12,9 +12,8 @@ user_num_count: int = 0
 def access_login():
     username: str = input("Username: ")
     password: str = input("Password: ")
-    print(username, password)
 
-    # validate username and password
+    # check username and password in `login_db`
 
     # enter contact page
 
