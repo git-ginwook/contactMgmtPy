@@ -2,6 +2,10 @@ import loginPg
 
 
 def main() -> None:
+    """
+    start page with login options for user to select from
+    :return: None
+    """
     # start Contact Management App
     print("[Contact Management App]")
 
@@ -33,7 +37,7 @@ def main() -> None:
             elif option == 4:
                 loginPg.delete_login()
             else:
-                print("please enter a valid integer between 1 and 4.")
+                print("please enter a valid integer between 0 and 4.")
             continue
 
     print("Thanks for using Contact Management App!")
