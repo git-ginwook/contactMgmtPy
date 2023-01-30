@@ -28,6 +28,8 @@ def access_login() -> None:
         except KeyError:
             print("username doesn't exist.")
             continue
+        except EOFError:
+            raise EOFError("Exit Contact Management App")
         else:
             if login_db[username][1] == password:
                 print("login successful!")
