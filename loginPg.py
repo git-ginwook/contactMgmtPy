@@ -14,7 +14,7 @@ def access_login() -> bool and dict:
     attempt: int = 1
     max_attempt: int = 5
 
-    print("Login with your username and password")
+    print("Login with your username and password.")
     for i in range(attempt, max_attempt+1):
         try:
             # get user inputs
@@ -52,7 +52,7 @@ def create_login() -> None:
     create a user profile with username and password
 
     RULES:
-    - username must be UNIQUE.
+    - username must be unique and less than 24 characters.
     - password must be between 8-12 characters.
     - password must have at least one special character: !@#$%^&*()-_+="
     - password must have at least one number.
@@ -62,7 +62,7 @@ def create_login() -> None:
     """
     print("Create username and password.")
     print("RULES:")
-    print("    - username must be UNIQUE.")
+    print("    - username must be unique and less than 24 characters.")
     print("    - password must be between 8-12 characters.")
     print("    - password must have at least one special character: "
           "!@#$%^&*()-_+=")
@@ -128,7 +128,7 @@ def change_login(user: dict) -> None:
     update user profile to change username and/or password
 
     RULES:
-    - username must be UNIQUE.
+    - username must be unique and less than 24 characters.
     - password must be between 8-12 characters.
     - password must have at least one special character: !@#$%^&*()-_+="
     - password must have at least one number.
@@ -141,7 +141,7 @@ def change_login(user: dict) -> None:
     # change username and/or password
     print("Update username and password.")
     print("RULES:")
-    print("    - username must be UNIQUE.")
+    print("    - username must be unique and less than 24 characters.")
     print("    - password must be between 8-12 characters.")
     print("    - password must have at least one special character: "
           "!@#$%^&*()-_+=")
@@ -246,7 +246,7 @@ def delete_login(user: dict) -> None:
 
 def val_username(username: str) -> bool:
     """
-    validate whether username is unique.
+    validate whether username is unique and less than 24 characters.
 
     :param: username from user input
     :return: True or False
@@ -255,7 +255,10 @@ def val_username(username: str) -> bool:
     with open(user_fp, "r") as r_login:
         user_db: list = json.load(r_login)
 
-    # username validation (UNIQUE)
+    # username validation (unique and length)
+    if len(username) > 24:
+        return False
+
     for profile in user_db:
         if profile["username"] == username:
             print(f"'{username}' already exists. "
