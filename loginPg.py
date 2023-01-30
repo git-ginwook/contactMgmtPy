@@ -1,21 +1,19 @@
+import json
 import contactListPg
-
-
-# login database format:
-# login_db = {<username>: [<user_id>, <password>]}
-
-# initialize login DB with admin access
-login_db: dict = {"admin": [0, "1234"]}
 
 # count variables
 user_id_count: int = 0
 user_num_count: int = 0
 
+# filepath to login database
+login_db = './login_db.json'
+
 
 def access_login() -> None:
     """
-    check username and password in `login_db`
+    check username and password in `login_db.json`
     """
+    is_success = False
     attempt = 1
     max_attempt = 5
 
@@ -24,30 +22,33 @@ def access_login() -> None:
             username: str = input("Username: ")
             password: str = input("Password: ")
 
-            login_db[username]
-        except KeyError:
-            print("username doesn't exist.")
-            continue
+            with open(login_db, "r") as f_login:
+                db = json.load(f_login)
+
         except EOFError:
             raise EOFError("Exit Contact Management App")
+
         else:
-            if login_db[username][1] == password:
-                print("login successful!")
-                # move to contactListPg.py
-                contactListPg.view_contact(login_db[username][0])
+            for profile in db:
+                if profile["username"] == username and \
+                        profile["password"] == password:
+                    is_success = True
+                    print("login was successful!")
+                    # move to contactListPg.py
+                    contactListPg.view_contact(profile["user_id"])
+
+            if (is_success is False) and (attempt < max_attempt):
+                print("username and password don't match - please try again. "
+                      f"[{attempt}/{max_attempt}]")
+                attempt += 1
+                continue
+            elif (is_success is False) and (attempt == max_attempt):
+                print("Too many wrong attempts. "
+                      f"[{attempt}/{max_attempt}]")
+                attempt = 0
                 break
 
-            else:
-                if attempt < max_attempt:
-                    print(f"wrong password - please try again. "
-                          f"[{attempt}/{max_attempt}]")
-                    attempt += 1
-                    continue
-                else:
-                    print(f"Too many wrong attempts. "
-                          f"[{attempt}/{max_attempt}]")
-                    attempt = 0
-                    break
+            break
 
 
 def create_login():
