@@ -5,11 +5,6 @@
         "password": "1234"
     },
     {
-        "user_id": 2,
-        "username": "secondUser",
-        "password": "0000"
-    },
-    {
         "user_id": 3,
         "username": "superGinWook",
         "password": "abcd1!Avv"
@@ -23,5 +18,10 @@
         "user_id": 6,
         "username": "changeUserName",
         "password": "098o87#Q"
+    },
+    {
+        "user_id": 7,
+        "username": "validationTest",
+        "password": "sadfklj!9K9"
     }
 ]

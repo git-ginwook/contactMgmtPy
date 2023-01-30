@@ -69,10 +69,6 @@ def create_login() -> None:
     print("    - password must have at least one number.")
     print("    - password must have at least one uppercase.")
 
-    # flags
-    is_unique = True
-    is_val = False
-
     # validate username
     username: str = input("Username: ")
     is_unique = val_username(username)
@@ -85,6 +81,27 @@ def create_login() -> None:
 
     if not is_val:
         return
+
+    # confirm user action
+    while True:
+        try:
+            print("Are you sure you want to create your profile?")
+            is_confirm = input("Please enter 1 for YES or 2 for NO: ")
+            is_confirm = int(is_confirm)
+        except ValueError as val:
+            print(f"{val}. Please enter an integer [1 or 2].")
+            continue
+        except EOFError:
+            raise EOFError("Exit Contact Management App")
+        else:
+            if is_confirm == 1:
+                break
+            elif is_confirm == 2:
+                print("No new user file.")
+                return
+            else:
+                print("Please enter an integer [1 or 2].")
+                continue
 
     # read `login_db.json`
     with open(user_fp, "r") as r_login:
@@ -131,10 +148,6 @@ def change_login(user: dict) -> None:
     print("    - password must have at least one number.")
     print("    - password must have at least one uppercase.")
 
-    # flags
-    is_unique = True
-    is_val = False
-
     # validate new username
     username: str = input("Username: ")
     is_unique = val_username(username)
@@ -146,6 +159,27 @@ def change_login(user: dict) -> None:
     is_val = val_password(password)
     if not is_val:
         return
+
+    # confirm user action
+    while True:
+        try:
+            print("Are you sure you want to change your profile?")
+            is_confirm = input("Please enter 1 for YES or 2 for NO: ")
+            is_confirm = int(is_confirm)
+        except ValueError as val:
+            print(f"{val}. Please enter an integer [1 or 2].")
+            continue
+        except EOFError:
+            raise EOFError("Exit Contact Management App")
+        else:
+            if is_confirm == 1:
+                break
+            elif is_confirm == 2:
+                print("No changes made to your user profile.")
+                return
+            else:
+                print("Please enter an integer [1 or 2].")
+                continue
 
     # read `login_db.json`
     with open(user_fp, "r") as r_login:
@@ -172,6 +206,27 @@ def delete_login(user: dict) -> None:
     :param: user profile (logged in)
     :return: None
     """
+    # confirm user action
+    while True:
+        try:
+            print("Are you sure you want to delete your profile?")
+            is_confirm = input("Please enter 1 for YES or 2 for NO: ")
+            is_confirm = int(is_confirm)
+        except ValueError as val:
+            print(f"{val}. Please enter an integer [1 or 2].")
+            continue
+        except EOFError:
+            raise EOFError("Exit Contact Management App")
+        else:
+            if is_confirm == 1:
+                break
+            elif is_confirm == 2:
+                print("Great choice - stay with us!")
+                return
+            else:
+                print("Please enter an integer [1 or 2].")
+                continue
+
     # read `login_db.json`
     with open(user_fp, "r") as r_login:
         user_db: list = json.load(r_login)
@@ -223,11 +278,6 @@ def val_password(password: str) -> bool:
     """
     specials = "!@#$%^&*()-_+="
     nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-
-    is_length = False
-    has_symbol = False
-    has_num = False
-    has_upper = False
 
     # password validation (4 rules)
     is_length = True if (8 <= len(password) <= 12) else False

@@ -15,7 +15,7 @@ def main() -> None:
     # Choose login option
     while True:
         try:
-            option = input("Please choose a login option [0-4]:\n"
+            option = input("Please choose a login option [0 ~ 4]:\n"
                            "    [0] exit the program\n"
                            "    [1] login with username and password\n"
                            "    [2] create login profile\n"
@@ -23,8 +23,8 @@ def main() -> None:
                            "    [4] delete login profile\n")
             option = int(option)
             is_login: bool = False
-        except ValueError:
-            print("Please enter an integer.")
+        except ValueError as val:
+            print(f"{val}. Please enter an integer [0 ~ 4].")
             continue
         except EOFError:
             raise EOFError("Exit Contact Management App")
@@ -48,7 +48,7 @@ def main() -> None:
                 if is_login:
                     loginPg.delete_login(user)
             else:
-                print("Please enter a valid integer between 0 and 4.")
+                print("Please enter an integer [0 ~ 4].")
             continue
 
     print("Thanks for using Contact Management App!")
