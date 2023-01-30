@@ -6,7 +6,6 @@ def access_login(login_db: str) -> None:
     """
     login username and password in `login_db.json`
     """
-    is_success: bool = False
     attempt: int = 1
     max_attempt: int = 5
 
@@ -28,22 +27,21 @@ def access_login(login_db: str) -> None:
             for profile in db:
                 if profile["username"] == username and \
                         profile["password"] == password:
-                    is_success = True
                     print("login was successful!")
                     # move to contactListPg.py
                     contactListPg.view_contact(profile["user_id"])
+                    return
 
-            if (not is_success) and (attempt < max_attempt):
+            if attempt < max_attempt:
                 print("username and password don't match - please try again. "
                       f"[{attempt}/{max_attempt}]")
                 attempt += 1
                 continue
-            elif (not is_success) and (attempt == max_attempt):
+            elif attempt == max_attempt:
                 print("Too many wrong attempts. "
                       f"[{attempt}/{max_attempt}]")
-                attempt = 0
-            break
-    return
+
+            return
 
 
 def create_login(login_db: str) -> None:
