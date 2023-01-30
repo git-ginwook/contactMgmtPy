@@ -1,21 +1,51 @@
+import contactListPg
+
+
 # login database format:
-# login_db = {<userId>: {<username>, <password>}}
+# login_db = {<username>: [<user_id>, <password>]}
 
 # initialize login DB with admin access
-login_db: dict = {0: {"admin", "1234"}}
+login_db: dict = {"admin": [0, "1234"]}
 
 # count variables
 user_id_count: int = 0
 user_num_count: int = 0
 
 
-def access_login():
-    username: str = input("Username: ")
-    password: str = input("Password: ")
+def access_login() -> None:
+    """
+    check username and password in `login_db`
+    """
+    attempt = 1
+    max_attempt = 5
 
-    # check username and password in `login_db`
+    while True:
+        try:
+            username: str = input("Username: ")
+            password: str = input("Password: ")
 
-    # enter contact page
+            login_db[username]
+        except KeyError:
+            print("username doesn't exist.")
+            continue
+        else:
+            if login_db[username][1] == password:
+                print("login successful!")
+                # move to contactListPg.py
+                contactListPg.view_contact(login_db[username][0])
+                break
+
+            else:
+                if attempt < max_attempt:
+                    print(f"wrong password - please try again. "
+                          f"[{attempt}/{max_attempt}]")
+                    attempt += 1
+                    continue
+                else:
+                    print(f"Too many wrong attempts. "
+                          f"[{attempt}/{max_attempt}]")
+                    attempt = 0
+                    break
 
 
 def create_login():
