@@ -13,5 +13,20 @@
         "user_id": 2,
         "username": "secondUser",
         "password": "0000"
+    },
+    {
+        "user_id": 3,
+        "username": "superGinWook",
+        "password": "abcd1!Avv"
+    },
+    {
+        "user_id": 4,
+        "username": "unique",
+        "password": "abcdabcd("
+    },
+    {
+        "user_id": 5,
+        "username": "deleteThis",
+        "password": "dlwpsms1&N"
     }
 ]

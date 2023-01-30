@@ -48,26 +48,41 @@ def access_login(login_db: str) -> None:
 
 def create_login(login_db: str) -> None:
     """
-    create UNIQUE username and password
+    create a user profile with username and password
 
-    password validation
-    - length: 8-12 characters
-    - special character: !@#$%^&*()-_+=
-    - one number
-    - one upper case
+    RULES:
+    - username must be UNIQUE.
+    - password must be between 8-12 characters.
+    - password must have at least one special character: !@#$%^&*()-_+="
+    - password must have at least one number.
+    - password must have at least one uppercase.
     """
+    specials = "!@#$%^&*()-_+="
+    nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+    # flags
     is_unique = True
+    is_length = False
+    has_symbol = False
+    has_num = False
+    has_upper = False
+    is_val = False
 
-    print("create username and password")
-    # get user inputs
-    username: str = input("Username: ")
-    password: str = input("Password: ")
-
-    # password validation (rules)
+    print("create username and password.")
+    print("RULES:")
+    print("    - username must be UNIQUE.")
+    print("    - password must be between 8-12 characters.")
+    print("    - password must have at least one special character: "
+          "!@#$%^&*()-_+=")
+    print("    - password must have at least one number.")
+    print("    - password must have at least one uppercase.")
 
     # read `login_db.json`
     with open(login_db, "r") as f_login:
         db = json.load(f_login)
+
+    # get username
+    username: str = input("Username: ")
 
     # username validation (UNIQUE)
     for profile in db:
@@ -78,6 +93,22 @@ def create_login(login_db: str) -> None:
             break
 
     if not is_unique:
+        return
+
+    # get password
+    password: str = input("Password: ")
+
+    # password validation (4 rules)
+    is_length = True if (8 < len(password) < 12) else False
+    has_symbol = [True for special in specials if special in password]
+    has_num = [True for num in nums if num in password]
+    has_upper = [True for char in password if char.isupper()]
+
+    if is_length and has_symbol and has_num and has_upper:
+        is_val = True
+
+    if not is_val:
+        print("Invalid password. Please follow the rules for password.")
         return
 
     # append new profile
