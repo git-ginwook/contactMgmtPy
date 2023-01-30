@@ -23,5 +23,15 @@
         "user_id": 7,
         "username": "validationTest",
         "password": "sadfklj!9K9"
+    },
+    {
+        "user_id": 8,
+        "username": "testUser",
+        "password": "abcd1@Qpo"
+    },
+    {
+        "user_id": 9,
+        "username": "testUserTwo",
+        "password": "absd!Q99"
     }
 ]

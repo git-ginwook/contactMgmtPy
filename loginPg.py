@@ -32,7 +32,7 @@ def access_login() -> bool and dict:
             for profile in user_db:
                 if profile["username"] == username and \
                         profile["password"] == password:
-                    print("Login was successful!")
+                    print("Login was successful!\n")
                     return True, profile
 
             if attempt < max_attempt:
@@ -42,7 +42,7 @@ def access_login() -> bool and dict:
                 continue
             elif attempt == max_attempt:
                 print("Too many wrong attempts. "
-                      f"[{attempt}/{max_attempt}]")
+                      f"[{attempt}/{max_attempt}]\n")
 
             return False, None
 
@@ -97,7 +97,7 @@ def create_login() -> None:
             if is_confirm == 1:
                 break
             elif is_confirm == 2:
-                print("No new user file.")
+                print("No new user file.\n")
                 return
             else:
                 print("Please enter an integer [1 or 2].")
@@ -119,7 +119,7 @@ def create_login() -> None:
     with open(user_fp, "w") as w_login:
         json.dump(user_db, w_login, indent=4)
 
-    print(f"Created a new user profile for '{username}'.")
+    print(f"Created a new user profile for '{username}'.\n")
     return
 
 
@@ -128,7 +128,7 @@ def change_login(user: dict) -> None:
     update user profile to change username and/or password
 
     RULES:
-    - username must be unique and less than 24 characters.
+    - username must be less than 24 characters.
     - password must be between 8-12 characters.
     - password must have at least one special character: !@#$%^&*()-_+="
     - password must have at least one number.
@@ -141,7 +141,7 @@ def change_login(user: dict) -> None:
     # change username and/or password
     print("Update username and password.")
     print("RULES:")
-    print("    - username must be unique and less than 24 characters.")
+    print("    - username must be less than 24 characters.")
     print("    - password must be between 8-12 characters.")
     print("    - password must have at least one special character: "
           "!@#$%^&*()-_+=")
@@ -150,8 +150,7 @@ def change_login(user: dict) -> None:
 
     # validate new username
     username: str = input("Username: ")
-    is_unique = val_username(username)
-    if not is_unique:
+    if len(username) > 24:
         return
 
     # validate new password
@@ -175,7 +174,7 @@ def change_login(user: dict) -> None:
             if is_confirm == 1:
                 break
             elif is_confirm == 2:
-                print("No changes made to your user profile.")
+                print("No changes made to your user profile.\n")
                 return
             else:
                 print("Please enter an integer [1 or 2].")
@@ -195,7 +194,7 @@ def change_login(user: dict) -> None:
     with open(user_fp, "w") as w_login:
         json.dump(user_db, w_login, indent=4)
 
-    print("Your user profile is updated.")
+    print("Your user profile is updated.\n")
     return
 
 
@@ -221,7 +220,7 @@ def delete_login(user: dict) -> None:
             if is_confirm == 1:
                 break
             elif is_confirm == 2:
-                print("Great choice - stay with us!")
+                print("Great choice - stay with us!\n")
                 return
             else:
                 print("Please enter an integer [1 or 2].")
@@ -240,7 +239,7 @@ def delete_login(user: dict) -> None:
     with open(user_fp, "w") as w_login:
         json.dump(user_db, w_login, indent=4)
 
-    print("Your user profile is deleted.")
+    print("Your user profile is deleted.\n")
     return
 
 

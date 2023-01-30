@@ -1,4 +1,3 @@
-import json
 import loginPg
 import contactListPg
 
@@ -22,12 +21,11 @@ def main() -> None:
                 "Please choose a login option [0 ~ 5]:\n"
                 "    [0] exit the program\n"
                 "    [1] login with username and password (account needed)\n"
-                "    [2] create login profile (login required)\n"
+                "    [2] create login profile\n"
                 "    [3] change username and password (login required)\n"
                 "    [4] delete login profile (login required)\n"
                 "    [5] contact developer for any questions or feedback\n")
             option = int(option)
-            is_login: bool = False
         except ValueError as val:
             print(f"{val}. Please enter an integer [0 ~ 5].")
             continue
