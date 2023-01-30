@@ -8,7 +8,8 @@ def main() -> None:
     # Choose login option
     while True:
         try:
-            option = input("Please choose a login option [1-4]:\n"
+            option = input("Please choose a login option [0-4]:\n"
+                           "    [0] exit the program\n"
                            "    [1] login with username and password\n"
                            "    [2] create login profile\n"
                            "    [3] change username and password\n"
@@ -20,7 +21,9 @@ def main() -> None:
         except EOFError:
             raise EOFError("Exit Contact Management App")
         else:
-            print(f'You entered: {option}')
+            print(f'You entered option: [{option}]')
+            if option == 0:
+                break
             if option == 1:
                 loginPg.access_login()
             elif option == 2:
@@ -32,7 +35,12 @@ def main() -> None:
             else:
                 print("please enter a valid integer between 1 and 4.")
                 continue
+            if option == 1:
+                loginPg.access_login()
+            # exit program
             break
+
+    print("Thanks for using Contact Management App!")
 
 
 if __name__ == "__main__":
