@@ -11,13 +11,13 @@ login_db = './login_db.json'
 
 def access_login() -> None:
     """
-    check username and password in `login_db.json`
+    login username and password in `login_db.json`
     """
     is_success = False
-    attempt = 1
+    attempt = 0
     max_attempt = 5
 
-    while True:
+    for i in range(attempt, max_attempt):
         try:
             username: str = input("Username: ")
             password: str = input("Password: ")
@@ -39,25 +39,27 @@ def access_login() -> None:
 
             if (is_success is False) and (attempt < max_attempt):
                 print("username and password don't match - please try again. "
-                      f"[{attempt}/{max_attempt}]")
+                      f"[{attempt+1}/{max_attempt}]")
                 attempt += 1
                 continue
             elif (is_success is False) and (attempt == max_attempt):
                 print("Too many wrong attempts. "
-                      f"[{attempt}/{max_attempt}]")
+                      f"[{attempt+1}/{max_attempt}]")
                 attempt = 0
-                break
 
             break
 
 
-def create_login():
+def create_login() -> None:
+    """
+    create user
+    """
+    print("create username and password")
     # add a new login profile to `login_db`
 
     # confirm creation
 
     # return to `startPg.py`
-    pass
 
 
 def change_login():
