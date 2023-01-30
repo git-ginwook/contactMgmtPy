@@ -5,11 +5,6 @@
         "password": "1234"
     },
     {
-        "user_id": 1,
-        "username": "superGinwook",
-        "password": "abcd"
-    },
-    {
         "user_id": 2,
         "username": "secondUser",
         "password": "0000"
@@ -20,18 +15,13 @@
         "password": "abcd1!Avv"
     },
     {
-        "user_id": 4,
-        "username": "unique",
-        "password": "abcdabcd("
-    },
-    {
         "user_id": 5,
         "username": "updateName",
         "password": "asjl!9Abb"
     },
     {
         "user_id": 6,
-        "username": "newUsername",
-        "password": "abcd1!89A"
+        "username": "changeUserName",
+        "password": "098o87#Q"
     }
 ]

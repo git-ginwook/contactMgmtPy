@@ -1,5 +1,5 @@
 def view_contact(user_id):
-    print("show all contact list")
+    print("work-in-progress: show all contact list")
 
 
 if __name__ == '__main__':

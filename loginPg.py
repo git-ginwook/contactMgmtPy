@@ -8,6 +8,8 @@ user_fp: str = './login_db.json'
 def access_login() -> bool and dict:
     """
     login username and password in `login_db.json`
+
+    :return: True/False, user profile
     """
     attempt: int = 1
     max_attempt: int = 5
@@ -55,6 +57,8 @@ def create_login() -> None:
     - password must have at least one special character: !@#$%^&*()-_+="
     - password must have at least one number.
     - password must have at least one uppercase.
+
+    :return: None
     """
     print("Create username and password.")
     print("RULES:")
@@ -102,7 +106,7 @@ def create_login() -> None:
     return
 
 
-def change_login(profile: dict) -> None:
+def change_login(user: dict) -> None:
     """
     update user profile to change username and/or password
 
@@ -112,6 +116,10 @@ def change_login(profile: dict) -> None:
     - password must have at least one special character: !@#$%^&*()-_+="
     - password must have at least one number.
     - password must have at least one uppercase.
+
+    :param:
+    - profile: user profile (logged in)
+    :return: None
     """
     # change username and/or password
     print("Update username and password.")
@@ -143,13 +151,13 @@ def change_login(profile: dict) -> None:
     with open(user_fp, "r") as r_login:
         user_db: list = json.load(r_login)
 
-        # update profile
-        for user in user_db:
-            if user["user_id"] == profile["user_id"]:
-                user["username"] = username
-                user["password"] = password
+    # update the current user
+    for profile in user_db:
+        if profile["user_id"] == user["user_id"]:
+            profile["username"] = username
+            profile["password"] = password
 
-    # write new profile to `login_db.json`
+    # write updated `user_db` to `login_db.json`
     with open(user_fp, "w") as w_login:
         json.dump(user_db, w_login, indent=4)
 
@@ -157,21 +165,35 @@ def change_login(profile: dict) -> None:
     return
 
 
-def delete_login(profile: dict) -> None:
-    # delete login profile
+def delete_login(user: dict) -> None:
+    """
+    delete the current user profile
 
-    # confirm username and password
+    :param: user profile (logged in)
+    :return: None
+    """
+    # read `login_db.json`
+    with open(user_fp, "r") as r_login:
+        user_db: list = json.load(r_login)
 
-    # confirm deletion
+    # remove the current user
+    for idx, profile in enumerate(user_db):
+        if profile["user_id"] == user["user_id"]:
+            user_db.pop(idx)
 
-    # return to `startPg.py`
-    pass
+    # write updated `user_db` to `login_db.json`
+    with open(user_fp, "w") as w_login:
+        json.dump(user_db, w_login, indent=4)
+
+    print("Your user profile is deleted.")
+    return
 
 
 def val_username(username: str) -> bool:
     """
     validate whether username is unique.
 
+    :param: username from user input
     :return: True or False
     """
     # read `login_db.json`
@@ -188,7 +210,7 @@ def val_username(username: str) -> bool:
     return True
 
 
-def val_password(password):
+def val_password(password: str) -> bool:
     """
     validate whether password meets the following criteria:
     - password must be between 8-12 characters.
@@ -196,6 +218,7 @@ def val_password(password):
     - password must have at least one number.
     - password must have at least one uppercase.
 
+    :param: password from user input
     :return: True or False
     """
     specials = "!@#$%^&*()-_+="
@@ -207,7 +230,7 @@ def val_password(password):
     has_upper = False
 
     # password validation (4 rules)
-    is_length = True if (8 < len(password) < 12) else False
+    is_length = True if (8 <= len(password) <= 12) else False
     has_symbol = [True for special in specials if special in password]
     has_num = [True for num in nums if num in password]
     has_upper = [True for char in password if char.isupper()]

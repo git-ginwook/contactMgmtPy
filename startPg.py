@@ -6,6 +6,7 @@ import contactListPg
 def main() -> None:
     """
     start page with login options for user to select from
+
     :return: None
     """
     # start Contact Management App
@@ -32,20 +33,20 @@ def main() -> None:
             if option == 0:
                 break
             if option == 1:
-                is_login, profile = loginPg.access_login()
+                is_login, user = loginPg.access_login()
                 if is_login:
                     # move to contactListPg.py
-                    contactListPg.view_contact(profile["user_id"])
+                    contactListPg.view_contact(user["user_id"])
             elif option == 2:
                 loginPg.create_login()
             elif option == 3:
-                is_login, profile = loginPg.access_login()
+                is_login, user = loginPg.access_login()
                 if is_login:
-                    loginPg.change_login(profile)
+                    loginPg.change_login(user)
             elif option == 4:
-                is_login, profile = loginPg.access_login()
+                is_login, user = loginPg.access_login()
                 if is_login:
-                    loginPg.delete_login(profile)
+                    loginPg.delete_login(user)
             else:
                 print("Please enter a valid integer between 0 and 4.")
             continue
