@@ -26,7 +26,12 @@
     },
     {
         "user_id": 5,
-        "username": "deleteThis",
-        "password": "dlwpsms1&N"
+        "username": "updateName",
+        "password": "asjl!9Abb"
+    },
+    {
+        "user_id": 6,
+        "username": "newUsername",
+        "password": "abcd1!89A"
     }
 ]

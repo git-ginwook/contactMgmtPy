@@ -1,8 +1,6 @@
+import json
 import loginPg
-
-
-# filepath to login database
-login_db: str = './login_db.json'
+import contactListPg
 
 
 def main() -> None:
@@ -23,6 +21,7 @@ def main() -> None:
                            "    [3] change username and password\n"
                            "    [4] delete login profile\n")
             option = int(option)
+            is_login: bool = False
         except ValueError:
             print("Please enter an integer.")
             continue
@@ -33,15 +32,22 @@ def main() -> None:
             if option == 0:
                 break
             if option == 1:
-                loginPg.access_login(login_db)
+                is_login, profile = loginPg.access_login()
+                if is_login:
+                    # move to contactListPg.py
+                    contactListPg.view_contact(profile["user_id"])
             elif option == 2:
-                loginPg.create_login(login_db)
+                loginPg.create_login()
             elif option == 3:
-                loginPg.change_login()
+                is_login, profile = loginPg.access_login()
+                if is_login:
+                    loginPg.change_login(profile)
             elif option == 4:
-                loginPg.delete_login()
+                is_login, profile = loginPg.access_login()
+                if is_login:
+                    loginPg.delete_login(profile)
             else:
-                print("please enter a valid integer between 0 and 4.")
+                print("Please enter a valid integer between 0 and 4.")
             continue
 
     print("Thanks for using Contact Management App!")
