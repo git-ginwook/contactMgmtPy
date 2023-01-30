@@ -34,11 +34,7 @@ def main() -> None:
                 loginPg.delete_login()
             else:
                 print("please enter a valid integer between 1 and 4.")
-                continue
-            if option == 1:
-                loginPg.access_login()
-            # exit program
-            break
+            continue
 
     print("Thanks for using Contact Management App!")
 
