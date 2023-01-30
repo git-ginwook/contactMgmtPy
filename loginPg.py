@@ -7,10 +7,11 @@ def access_login(login_db: str) -> None:
     login username and password in `login_db.json`
     """
     is_success: bool = False
-    attempt: int = 0
+    attempt: int = 1
     max_attempt: int = 5
 
-    for i in range(attempt, max_attempt):
+    print("login with your username and password")
+    for i in range(attempt, max_attempt+1):
         try:
             # get user inputs
             username: str = input("Username: ")
@@ -32,17 +33,17 @@ def access_login(login_db: str) -> None:
                     # move to contactListPg.py
                     contactListPg.view_contact(profile["user_id"])
 
-            if (is_success is False) and (attempt < max_attempt):
+            if (not is_success) and (attempt < max_attempt):
                 print("username and password don't match - please try again. "
-                      f"[{attempt+1}/{max_attempt}]")
+                      f"[{attempt}/{max_attempt}]")
                 attempt += 1
                 continue
-            elif (is_success is False) and (attempt == max_attempt):
+            elif (not is_success) and (attempt == max_attempt):
                 print("Too many wrong attempts. "
-                      f"[{attempt+1}/{max_attempt}]")
+                      f"[{attempt}/{max_attempt}]")
                 attempt = 0
-
             break
+    return
 
 
 def create_login(login_db: str) -> None:
@@ -55,18 +56,29 @@ def create_login(login_db: str) -> None:
     - one number
     - one upper case
     """
+    is_unique = True
+
     print("create username and password")
     # get user inputs
     username: str = input("Username: ")
     password: str = input("Password: ")
-
-    # username validation (UNIQUE)
 
     # password validation (rules)
 
     # read `login_db.json`
     with open(login_db, "r") as f_login:
         db = json.load(f_login)
+
+    # username validation (UNIQUE)
+    for profile in db:
+        if profile["username"] == username:
+            print(f"'{username}' already exists. "
+                  f"Please use a different username.")
+            is_unique = False
+            break
+
+    if not is_unique:
+        return
 
     # append new profile
     new_profile: dict = {
@@ -80,10 +92,8 @@ def create_login(login_db: str) -> None:
     with open(login_db, "w") as f_login:
         json.dump(db, f_login, indent=4)
 
-    # confirm creation
-
-    # return to `startPg.py`
-    print(f"create a new user profile for '{username}'.")
+    print(f"Created a new user profile for '{username}'.")
+    return
 
 
 def change_login():
