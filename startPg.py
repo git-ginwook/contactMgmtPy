@@ -1,6 +1,10 @@
 import loginPg
 
 
+# filepath to login database
+login_db: str = './login_db.json'
+
+
 def main() -> None:
     """
     start page with login options for user to select from
@@ -29,9 +33,9 @@ def main() -> None:
             if option == 0:
                 break
             if option == 1:
-                loginPg.access_login()
+                loginPg.access_login(login_db)
             elif option == 2:
-                loginPg.create_login()
+                loginPg.create_login(login_db)
             elif option == 3:
                 loginPg.change_login()
             elif option == 4:

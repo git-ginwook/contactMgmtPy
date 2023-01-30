@@ -1,27 +1,22 @@
 import json
 import contactListPg
 
-# count variables
-user_id_count: int = 0
-user_num_count: int = 0
 
-# filepath to login database
-login_db = './login_db.json'
-
-
-def access_login() -> None:
+def access_login(login_db: str) -> None:
     """
     login username and password in `login_db.json`
     """
-    is_success = False
-    attempt = 0
-    max_attempt = 5
+    is_success: bool = False
+    attempt: int = 0
+    max_attempt: int = 5
 
     for i in range(attempt, max_attempt):
         try:
+            # get user inputs
             username: str = input("Username: ")
             password: str = input("Password: ")
 
+            # read login_db.json
             with open(login_db, "r") as f_login:
                 db = json.load(f_login)
 
@@ -50,16 +45,45 @@ def access_login() -> None:
             break
 
 
-def create_login() -> None:
+def create_login(login_db: str) -> None:
     """
-    create user
+    create UNIQUE username and password
+
+    password validation
+    - length: 8-12 characters
+    - special character: !@#$%^&*()-_+=
+    - one number
+    - one upper case
     """
     print("create username and password")
-    # add a new login profile to `login_db`
+    # get user inputs
+    username: str = input("Username: ")
+    password: str = input("Password: ")
+
+    # username validation (UNIQUE)
+
+    # password validation (rules)
+
+    # read `login_db.json`
+    with open(login_db, "r") as f_login:
+        db = json.load(f_login)
+
+    # append new profile
+    new_profile: dict = {
+        "user_id": db[-1]["user_id"] + 1,
+        "username": username,
+        "password": password
+    }
+    db.append(new_profile)
+
+    # write new profile to `login_db.json`
+    with open(login_db, "w") as f_login:
+        json.dump(db, f_login, indent=4)
 
     # confirm creation
 
     # return to `startPg.py`
+    print(f"create a new user profile for '{username}'.")
 
 
 def change_login():
