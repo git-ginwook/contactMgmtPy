@@ -3,7 +3,6 @@ import json
 
 # filepath to login database
 user_fp: str = './login_db.json'
-last_user_id: int = 0
 
 
 def access_login() -> bool and dict:
