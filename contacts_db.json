@@ -2,9 +2,9 @@
     {
         "user_id": 0,
         "last_contact": 0,
-        "contacts": {
-            "contact_id": 0,
-            "info": {
+        "contacts": [
+            {
+                "contact_id": 0,
                 "f_name": "GinWook",
                 "l_name": "Lee",
                 "m_name": "",
@@ -13,44 +13,17 @@
                 "address": "",
                 "homepage": "",
                 "company": "HP, Inc.",
-                "department": "BigDataOS",
+                "department": "",
                 "title": "big data engineer",
                 "work phone": "",
                 "work address": "",
-                "memo": "This is me!",
+                "memo": "this is me.",
                 "reminder_1": "",
                 "reminder_2": "",
                 "reminder_3": "",
                 "reminder_4": "",
                 "reminder_5": ""
             }
-        }
-    },
-    {
-        "user_id": 1,
-        "last_contact": 0,
-        "contacts": {
-            "contact_id": 0,
-            "info": {
-                "f_name": "tester",
-                "l_name": "master",
-                "m_name": "",
-                "phone": "123-456-7890",
-                "email": "abc@gmail.com",
-                "address": "",
-                "homepage": "google.com",
-                "company": "Google",
-                "department": "Strategy",
-                "title": "Analyst",
-                "work phone": "",
-                "work address": "",
-                "memo": "noogler",
-                "reminder_1": "",
-                "reminder_2": "",
-                "reminder_3": "",
-                "reminder_4": "",
-                "reminder_5": ""
-            }
-        }
+        ]
     }
 ]

@@ -38,8 +38,11 @@ def main() -> None:
             if option == 1:
                 is_login, user = loginPg.access_login()
                 if is_login:
-                    # move to contactListPg.py
-                    contactListPg.view_contact(user["user_id"])
+                    # access contacts for `user_id`
+                    is_first = contactListPg.view_contact(user["user_id"])
+                    if is_first:
+                        contactListPg.view_contact(user["user_id"])
+
             elif option == 2:
                 loginPg.create_login()
             elif option == 3:
