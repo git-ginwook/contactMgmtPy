@@ -108,9 +108,11 @@ def create_login() -> None:
     with open(user_fp, "r") as r_login:
         user_db: list = json.load(r_login)
 
+    user_db[0]["last_user_id"] += 1
+
     # append new profile
     new_profile: dict = {
-        "user_id": last_user_id + 1,
+        "user_id": user_db[0]["last_user_id"],
         "username": username,
         "password": password
     }
