@@ -36,7 +36,21 @@ def view_all(user_id: int) -> bool:
             "Full name: ", contact["f_name"], contact["l_name"]
         )
 
-    return False
+    # choose action
+    action: int = choose_action()
+
+    if action == 0:
+        return False
+    elif action == 1:
+        pass
+    elif action == 2:
+        pass
+    elif action == 3:
+        pass
+    else:
+        print("Please enter an integer [].")
+
+    return True
 
 
 def view_contact(user_id: int, contact_id: int) -> None:
@@ -121,6 +135,36 @@ def create_self(contacts_db: list, user_id: int) -> None:
     with open(contacts_fp, "w") as w_contacts:
         json.dump(contacts_db, w_contacts, indent=4)
     print("Thanks for completing your profile.\n")
+
+
+def choose_action() -> int:
+    """
+
+    :return:
+    """
+    # choose contact action
+    while True:
+        try:
+            action = input(
+                "What would you like to do with your contacts? []\n"
+                "    [0] log out\n"
+                "    [1] create a contact\n"
+                "    [2] view a contact detail\n"
+                "    [3] update a contact\n"
+                "    [4] delete a contact\n"
+            )
+            action = int(action)
+        except ValueError as val:
+            print(f"{val}. Please enter an integer [0 ~ 4].")
+            continue
+        except EOFError:
+            raise EOFError("Exit Contact Management App")
+        else:
+            if 0 <= action <= 4:
+                print(f"Your contact action: [{action}]")
+                return action
+            else:
+                continue
 
 
 if __name__ == '__main__':

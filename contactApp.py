@@ -32,7 +32,7 @@ def main() -> None:
         except EOFError:
             raise EOFError("Exit Contact Management App")
         else:
-            print(f'You entered option: [{option}]')
+            print(f'Your login option: [{option}]')
             if option == 0:
                 break
             if option == 1:
