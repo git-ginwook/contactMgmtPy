@@ -241,6 +241,8 @@ def delete_login(user: dict) -> None:
     with open(user_fp, "w") as w_login:
         json.dump(user_db, w_login, indent=4)
 
+    # TODO: delete contacts associated with the user
+
     print("Your user profile is deleted.\n")
     return
 

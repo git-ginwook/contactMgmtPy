@@ -19,9 +19,10 @@ def view_all(user_id: int) -> bool:
         contacts_db: list = json.load(r_contacts)
 
     # check if first time logging in
-    for idx, contact in enumerate(contacts_db):
-        if contact["user_id"] == user_id:
+    for idx, user in enumerate(contacts_db):
+        if user["user_id"] == user_id:
             pos = idx
+            break
 
     # first time logging in
     if pos is None:
@@ -29,28 +30,41 @@ def view_all(user_id: int) -> bool:
         create_self(contacts_db, user_id)
         return True
 
-    # read all contacts related to `user_id`
-    for contact in contacts_db[pos]["contacts"]:
-        print(
-            "ID: ", contact["contact_id"], "\t",
-            "Full name: ", contact["f_name"], contact["l_name"]
-        )
+    while True:
+        # read all contacts related to `user_id`
+        for contact in contacts_db[pos]["contacts"]:
+            print(f"ID: {contact['contact_id']} | "
+                  f"Full name: {contact['f_name']} {contact['l_name']}")
+        print("\n")
 
-    # choose action
-    action: int = choose_action()
+        # choose action
+        action: int = choose_action()
 
-    if action == 0:
-        return False
-    elif action == 1:
-        pass
-    elif action == 2:
-        pass
-    elif action == 3:
-        pass
-    else:
-        print("Please enter an integer [].")
+        if action == 0:
+            return False
+        elif action == 1:
+            create_contact(user_id)
+            continue
+        elif action == 2:
+            view_contact(
+                user_id,
+                int(input("Enter contact_id: "))
+            )      # TODO: validate input
+            continue
+        elif action == 3:
+            update_contact(
+                user_id,
+                int(input("Enter contact_id: "))
+            )       # TODO: validate input
+            continue
+        elif action == 4:
+            delete_contact(
+                user_id,
+                int(input("Enter contact_id: "))
+            )       # TODO: validate input
+            continue
 
-    return True
+        return True
 
 
 def view_contact(user_id: int, contact_id: int) -> None:
@@ -60,6 +74,31 @@ def view_contact(user_id: int, contact_id: int) -> None:
     :param contact_id:
     :return:
     """
+    # open `contacts_db`
+    with open(contacts_fp, "r") as r_contacts:
+        contacts_db: list = json.load(r_contacts)
+
+    # locate `user_id`
+    pos_u: None or int = None
+    for idx, user in enumerate(contacts_db):
+        if user["user_id"] == user_id:
+            pos_u = idx
+            break
+
+    # locate `contact_id`
+    pos_c: None or int = None
+    for idx, contact in enumerate(contacts_db[pos_u]["contacts"]):
+        if contact["contact_id"] == contact_id:
+            pos_c = idx
+            break
+
+    # show contact info
+    contact: dict = contacts_db[pos_u]["contacts"][pos_c]
+    for attr in contact:
+        print(attr, ": ", contact[attr])
+    print("\n")
+
+    return
 
 
 def update_contact(user_id: int, contact_id: int) -> None:
@@ -69,6 +108,60 @@ def update_contact(user_id: int, contact_id: int) -> None:
     :param contact_id:
     :return:
     """
+    with open(contacts_fp, "r") as r_contacts:
+        contacts_db: list = json.load(r_contacts)
+
+    # locate `user_id`
+    pos_u: None or int = None
+    for idx, user in enumerate(contacts_db):
+        if user["user_id"] == user_id:
+            pos_u = idx
+            break
+
+    # locate `contact_id`
+    pos_c: None or int = None
+    for idx, contact in enumerate(contacts_db[pos_u]["contacts"]):
+        if contact["contact_id"] == contact_id:
+            pos_c = idx
+            break
+
+    # show contact info
+    contact: dict = contacts_db[pos_u]["contacts"][pos_c]
+    for attr in contact:
+        print(f"{attr}: {contact[attr]}")
+    while True:
+        try:
+            attr: str = input("Enter an attribute to change: ")
+            key_test: str = contact[attr]
+            change: str = input(f"Enter new value for {attr}: ")
+        except KeyError as key:
+            print(f"{key}. Please enter a valid attribute.")
+            continue
+        except EOFError:
+            raise EOFError("Exit Contact Management App")
+        else:
+            if attr == "contact_id":
+                print("You cannot change contact_id.")
+                continue
+            else:
+                if key_test != change:
+                    contact[attr] = change
+
+            go_stop = input("Enter 1 to continue change or 2 to stop: ")
+            if go_stop == "1":
+                continue
+            elif go_stop == "2":
+                break
+            else:
+                print("Invalid option. Please enter 1 or 2.")
+                break
+
+    # update `contacts_db`
+    with open(contacts_fp, "w") as w_contacts:
+        json.dump(contacts_db, w_contacts, indent=4)
+    print("Thanks for the update.\n")
+
+    return
 
 
 def create_contact(user_id: int) -> None:
@@ -146,7 +239,7 @@ def choose_action() -> int:
     while True:
         try:
             action = input(
-                "What would you like to do with your contacts? []\n"
+                "What would you like to do with your contacts? [0 ~ 4]\n"
                 "    [0] log out\n"
                 "    [1] create a contact\n"
                 "    [2] view a contact detail\n"
@@ -165,6 +258,17 @@ def choose_action() -> int:
                 return action
             else:
                 continue
+
+
+def val_contact_id() -> int:
+    """
+    validation:
+    - check if user input is an integer
+    - check if contact id exists in the database
+
+    :return:
+    """
+    # TODO: validate contact id input
 
 
 if __name__ == '__main__':

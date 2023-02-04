@@ -25,5 +25,32 @@
                 "reminder_5": ""
             }
         ]
+    },
+    {
+        "user_id": 1,
+        "last_contact": 0,
+        "contacts": [
+            {
+                "contact_id": 0,
+                "f_name": "tester",
+                "l_name": "master",
+                "m_name": "James",
+                "phone": "123-456-7890",
+                "email": "test@gmail.com",
+                "address": "",
+                "homepage": "google.com",
+                "company": "Google",
+                "department": "Sales",
+                "title": "sales director",
+                "work phone": "",
+                "work address": "",
+                "memo": "client moved to Google",
+                "reminder_1": "",
+                "reminder_2": "",
+                "reminder_3": "",
+                "reminder_4": "",
+                "reminder_5": ""
+            }
+        ]
     }
 ]
