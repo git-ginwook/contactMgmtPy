@@ -158,6 +158,11 @@ def update_contact(user_id: int, contact_id: int) -> None:
                 print("Invalid option. Please enter 1 or 2.")
                 break
 
+    # confirm user action
+    is_accept = input("Enter 1 to accept the change or 2 to cancel")
+    if is_accept != "1":
+        return
+
     # update `contacts_db.json`
     with open(contacts_fp, "w") as w_contacts:
         json.dump(contacts_db, w_contacts, indent=4)
@@ -207,6 +212,11 @@ def create_contact(user_id: int) -> None:
         "reminder_5": ""  # from reminders app
     }
 
+    # confirm user action
+    is_accept = input("Enter 1 to accept the change or 2 to cancel")
+    if is_accept != "1":
+        return
+
     # append `contact_profile`
     contacts_db[pos_u]["contacts"].append(contact_profile)
 
@@ -227,11 +237,13 @@ def create_contact(user_id: int) -> None:
 
 def delete_contact(user_id: int, contact_id: int) -> None:
     """
-    abc
+    delete a select contact
     :param user_id: from account login
     :param contact_id:
     :return:
     """
+
+    return
 
 
 def create_self(contacts_db: list, user_id: int) -> None:
@@ -276,11 +288,17 @@ def create_self(contacts_db: list, user_id: int) -> None:
         ]
     }
 
+    # confirm user action
+    is_accept = input("Enter 1 to accept the change or 2 to cancel")
+    if is_accept != "1":
+        return
+
     # write to `contacts_db.json`
     contacts_db.append(self_profile)
     with open(contacts_fp, "w") as w_contacts:
         json.dump(contacts_db, w_contacts, indent=4)
     print("Thanks for completing your profile.\n")
+    return
 
 
 def choose_action() -> int:
