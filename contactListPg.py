@@ -6,15 +6,13 @@ contacts_fp: str = './contacts_db.json'
 def view_all(user_id: int) -> bool:
     """
     view all contacts for `user_id`
-
     if logging in for the first time, complete self profile
-
     :param: user_id: from account login
     :return: True/False
     """
     pos: None or int = None
 
-    # open `contacts_db`
+    # open `contacts_db.json`
     with open(contacts_fp, "r") as r_contacts:
         contacts_db: list = json.load(r_contacts)
 
@@ -31,6 +29,7 @@ def view_all(user_id: int) -> bool:
         return True
 
     while True:
+        print("[ALL CONTACTS]")
         # read all contacts related to `user_id`
         for contact in contacts_db[pos]["contacts"]:
             print(f"    ID: {contact['contact_id']} | "
@@ -49,19 +48,19 @@ def view_all(user_id: int) -> bool:
             read_contact(
                 user_id,
                 int(input("Enter contact_id: "))
-            )      # TODO: validate input
+            )      # TODO: validate contact_id
             continue
         elif action == 3:
             update_contact(
                 user_id,
                 int(input("Enter contact_id: "))
-            )       # TODO: validate input
+            )       # TODO: validate contact_id
             continue
         elif action == 4:
             delete_contact(
                 user_id,
                 int(input("Enter contact_id: "))
-            )       # TODO: validate input
+            )       # TODO: validate contact_id
             continue
 
         return True
@@ -74,7 +73,7 @@ def read_contact(user_id: int, contact_id: int) -> None:
     :param contact_id: asd
     :return: None
     """
-    # open `contacts_db`
+    # open `contacts_db.json`
     with open(contacts_fp, "r") as r_contacts:
         contacts_db: list = json.load(r_contacts)
 
@@ -95,7 +94,6 @@ def read_contact(user_id: int, contact_id: int) -> None:
     # show contact info
     contact: dict = contacts_db[pos_u]["contacts"][pos_c]
     for attr in contact:
-        print(attr, ": ", contact[attr])
         print(f"    {attr}: {contact[attr]}")
     print("\n")
 
@@ -109,7 +107,7 @@ def update_contact(user_id: int, contact_id: int) -> None:
     :param contact_id:
     :return: None
     """
-    # open `contacts_db`
+    # open `contacts_db.json`
     with open(contacts_fp, "r") as r_contacts:
         contacts_db: list = json.load(r_contacts)
 
@@ -137,7 +135,7 @@ def update_contact(user_id: int, contact_id: int) -> None:
         try:
             attr: str = input("Enter an attribute to change: ")
             key_test: str = contact[attr]
-            change: str = input(f"Enter new value for {attr}: ")
+            change: str = input(f"Enter new value for {attr}: ").strip()
         except KeyError as key:
             print(f"{key}. Please enter a valid attribute.")
             continue
@@ -160,7 +158,7 @@ def update_contact(user_id: int, contact_id: int) -> None:
                 print("Invalid option. Please enter 1 or 2.")
                 break
 
-    # update `contacts_db`
+    # update `contacts_db.json`
     with open(contacts_fp, "w") as w_contacts:
         json.dump(contacts_db, w_contacts, indent=4)
     print("Thanks for the update.\n")
@@ -170,15 +168,66 @@ def update_contact(user_id: int, contact_id: int) -> None:
 
 def create_contact(user_id: int) -> None:
     """
-
+    create a new contact profile
     :param user_id: from account login
     :return: None
     """
+    # read `contacts_db.json`
+    with open(contacts_fp, "r") as r_contacts:
+        contacts_db: list = json.load(r_contacts)
+
+    # locate `user_id`
+    pos_u: None or int = None
+    for idx, user in enumerate(contacts_db):
+        if user["user_id"] == user_id:
+            pos_u = idx
+            break
+
+    # create `contact_profile`
+    contact_profile: dict = {
+        "contact_id": contacts_db[pos_u]["last_contact"] + 1,
+        "f_name": input("First name (required): ").strip(),  # TODO: no empty check 1
+        "l_name": input("Last name (required): ").strip(),  # TODO: no empty check 2
+        "m_name": input("Middle name: ").strip(),
+        "phone": input("Phone number: ").strip(),
+        "email": input("Email address: ").strip(),
+        "address": input("Home address: ").strip(),
+        "homepage": input("Homepage: ").strip(),
+        "company": input("Company: ").strip(),
+        "department": input("Department: ").strip(),
+        "title": input("Title: ").strip(),
+        "work phone": input("Work phone: ").strip(),
+        "work address": input("Work address: ").strip(),
+        "memo": input("Memo: ").strip(),
+        # TODO: GET request from Reminders app
+        "reminder_1": "",  # from reminders app
+        "reminder_2": "",  # from reminders app
+        "reminder_3": "",  # from reminders app
+        "reminder_4": "",  # from reminders app
+        "reminder_5": ""  # from reminders app
+    }
+
+    # append `contact_profile`
+    contacts_db[pos_u]["contacts"].append(contact_profile)
+
+    # increment `last_contact`
+    contacts_db[pos_u]["last_contact"] += 1
+
+    # write new `contact_profile` to `contacts_db.json`
+    with open(contacts_fp, "w") as w_contacts:
+        json.dump(contacts_db, w_contacts, indent=4)
+    print("Thanks for creating a new contact profile.\n")
+
+    go_stop: str = input("Enter 1 to create another or 2 to stop: ")
+    if go_stop == "1":
+        create_contact(user_id)
+
+    return
 
 
 def delete_contact(user_id: int, contact_id: int) -> None:
     """
-
+    abc
     :param user_id: from account login
     :param contact_id:
     :return:
@@ -204,19 +253,19 @@ def create_self(contacts_db: list, user_id: int) -> None:
         "contacts": [
             {
                 "contact_id": 0,
-                "f_name": input("First name (required): "),  # TODO: no empty check 1
-                "l_name": input("Last name (required): "),  # TODO: no empty check 2
-                "m_name": input("Middle name: "),
-                "phone": input("Phone number: "),
-                "email": input("Email address: "),
-                "address": input("Home address: "),
-                "homepage": input("Homepage: "),
-                "company": input("Company: "),
-                "department": input("Department: "),
-                "title": input("Title: "),
-                "work phone": input("Work phone: "),
-                "work address": input("Work address: "),
-                "memo": input("Memo: "),
+                "f_name": input("First name (required): ").strip(),  # TODO: no empty check 1
+                "l_name": input("Last name (required): ").strip(),  # TODO: no empty check 2
+                "m_name": input("Middle name: ").strip(),
+                "phone": input("Phone number: ").strip(),
+                "email": input("Email address: ").strip(),
+                "address": input("Home address: ").strip(),
+                "homepage": input("Homepage: ").strip(),
+                "company": input("Company: ").strip(),
+                "department": input("Department: ").strip(),
+                "title": input("Title: ").strip(),
+                "work phone": input("Work phone: ").strip(),
+                "work address": input("Work address: ").strip(),
+                "memo": input("Memo: ").strip(),
                 # TODO: GET request from Reminders app
                 "reminder_1": "",  # from reminders app
                 "reminder_2": "",  # from reminders app
@@ -227,7 +276,7 @@ def create_self(contacts_db: list, user_id: int) -> None:
         ]
     }
 
-    # write to `contacts_db`
+    # write to `contacts_db.json`
     contacts_db.append(self_profile)
     with open(contacts_fp, "w") as w_contacts:
         json.dump(contacts_db, w_contacts, indent=4)
