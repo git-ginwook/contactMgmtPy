@@ -33,7 +33,7 @@ def view_all(user_id: int) -> bool:
         # read all contacts related to `user_id`
         for contact in contacts_db[pos]["contacts"]:
             print(f"    ID: {contact['contact_id']} | "
-                  f"Full name: {contact['f_name']} {contact['l_name']}")
+                  f"Name: {contact['f_name']} {contact['l_name']}")
         print("\n")
 
         # choose action
@@ -66,12 +66,13 @@ def view_all(user_id: int) -> bool:
         return True
 
 
-def read_contact(user_id: int, contact_id: int) -> None:
+def read_contact(user_id: int, contact_id: int) -> \
+        list and dict and int and int:
     """
     read and display a select contact
     :param user_id: from account login
     :param contact_id: from view_all()
-    :return: None
+    :return: contacts_db, select contact, user position, contact position
     """
     # open `contacts_db.json`
     with open(contacts_fp, "r") as r_contacts:
@@ -97,7 +98,7 @@ def read_contact(user_id: int, contact_id: int) -> None:
         print(f"    {attr}: {contact[attr]}")
     print("\n")
 
-    return
+    return contacts_db, contact, pos_u, pos_c
 
 
 def update_contact(user_id: int, contact_id: int) -> None:
@@ -107,28 +108,8 @@ def update_contact(user_id: int, contact_id: int) -> None:
     :param contact_id: from view_all()
     :return: None
     """
-    # open `contacts_db.json`
-    with open(contacts_fp, "r") as r_contacts:
-        contacts_db: list = json.load(r_contacts)
-
-    # locate `user_id`
-    pos_u: None or int = None
-    for idx, user in enumerate(contacts_db):
-        if user["user_id"] == user_id:
-            pos_u = idx
-            break
-
-    # locate `contact_id`
-    pos_c: None or int = None
-    for idx, contact in enumerate(contacts_db[pos_u]["contacts"]):
-        if contact["contact_id"] == contact_id:
-            pos_c = idx
-            break
-
-    # show contact info
-    contact: dict = contacts_db[pos_u]["contacts"][pos_c]
-    for attr in contact:
-        print(f"{attr}: {contact[attr]}")
+    # show select contact profile
+    contacts_db, contact, pos_u, pos_c = read_contact(user_id, contact_id)
 
     # get user input to update contact
     while True:
@@ -161,6 +142,7 @@ def update_contact(user_id: int, contact_id: int) -> None:
     # confirm user action
     is_accept = input("Enter 1 to accept the change or 2 to cancel: ")
     if is_accept != "1":
+        print("Cancel al the change(s) made.\n")
         return
 
     # update `contacts_db.json`
@@ -248,31 +230,11 @@ def delete_contact(user_id: int, contact_id: int) -> None:
         print("You cannot delete your self profile.\n")
         return
 
-    # open `contacts_db.json`
-    with open(contacts_fp, "r") as r_contacts:
-        contacts_db: list = json.load(r_contacts)
-
-    # locate `user_id`
-    pos_u: None or int = None
-    for idx, user in enumerate(contacts_db):
-        if user["user_id"] == user_id:
-            pos_u = idx
-            break
-
-    # locate `contact_id`
-    pos_c: None or int = None
-    for idx, contact in enumerate(contacts_db[pos_u]["contacts"]):
-        if contact["contact_id"] == contact_id:
-            pos_c = idx
-            break
-
-    # show contact info
-    contact: dict = contacts_db[pos_u]["contacts"][pos_c]
-    for attr in contact:
-        print(f"{attr}: {contact[attr]}")
+    # show select contact profile
+    contacts_db, contact, pos_u, pos_c = read_contact(user_id, contact_id)
 
     # confirm user action
-    is_accept = input("Enter 1 to accept the change or 2 to cancel: ")
+    is_accept = input("Enter 1 to delete or 2 to cancel: ")
     if is_accept != "1":
         return
 
