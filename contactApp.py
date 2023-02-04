@@ -37,11 +37,11 @@ def main() -> None:
                 break
             if option == 1:
                 is_login, user = loginPg.access_login()
+
+                # access contacts for `user_id`
                 if is_login:
-                    # access contacts for `user_id`
-                    is_first = contactListPg.view_contact(user["user_id"])
-                    if is_first:
-                        contactListPg.view_contact(user["user_id"])
+                    if contactListPg.view_all(user["user_id"]):
+                        contactListPg.view_all(user["user_id"])
 
             elif option == 2:
                 loginPg.create_login()
