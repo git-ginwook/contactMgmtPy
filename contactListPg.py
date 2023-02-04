@@ -33,7 +33,7 @@ def view_all(user_id: int) -> bool:
     while True:
         # read all contacts related to `user_id`
         for contact in contacts_db[pos]["contacts"]:
-            print(f"ID: {contact['contact_id']} | "
+            print(f"    ID: {contact['contact_id']} | "
                   f"Full name: {contact['f_name']} {contact['l_name']}")
         print("\n")
 
@@ -46,7 +46,7 @@ def view_all(user_id: int) -> bool:
             create_contact(user_id)
             continue
         elif action == 2:
-            view_contact(
+            read_contact(
                 user_id,
                 int(input("Enter contact_id: "))
             )      # TODO: validate input
@@ -67,12 +67,12 @@ def view_all(user_id: int) -> bool:
         return True
 
 
-def view_contact(user_id: int, contact_id: int) -> None:
+def read_contact(user_id: int, contact_id: int) -> None:
     """
-
-    :param user_id:
-    :param contact_id:
-    :return:
+    read and display a select contact
+    :param user_id: from account login
+    :param contact_id: asd
+    :return: None
     """
     # open `contacts_db`
     with open(contacts_fp, "r") as r_contacts:
@@ -96,6 +96,7 @@ def view_contact(user_id: int, contact_id: int) -> None:
     contact: dict = contacts_db[pos_u]["contacts"][pos_c]
     for attr in contact:
         print(attr, ": ", contact[attr])
+        print(f"    {attr}: {contact[attr]}")
     print("\n")
 
     return
@@ -103,11 +104,12 @@ def view_contact(user_id: int, contact_id: int) -> None:
 
 def update_contact(user_id: int, contact_id: int) -> None:
     """
-
-    :param user_id:
+    update values of select attribute(s) for a select contact
+    :param user_id: from account login
     :param contact_id:
-    :return:
+    :return: None
     """
+    # open `contacts_db`
     with open(contacts_fp, "r") as r_contacts:
         contacts_db: list = json.load(r_contacts)
 
@@ -129,6 +131,8 @@ def update_contact(user_id: int, contact_id: int) -> None:
     contact: dict = contacts_db[pos_u]["contacts"][pos_c]
     for attr in contact:
         print(f"{attr}: {contact[attr]}")
+
+    # get user input to update contact
     while True:
         try:
             attr: str = input("Enter an attribute to change: ")
@@ -167,15 +171,15 @@ def update_contact(user_id: int, contact_id: int) -> None:
 def create_contact(user_id: int) -> None:
     """
 
-    :param user_id:
-    :return:
+    :param user_id: from account login
+    :return: None
     """
 
 
 def delete_contact(user_id: int, contact_id: int) -> None:
     """
 
-    :param user_id:
+    :param user_id: from account login
     :param contact_id:
     :return:
     """
@@ -185,8 +189,8 @@ def create_self(contacts_db: list, user_id: int) -> None:
     """
 
     :param contacts_db:
-    :param user_id:
-    :return:
+    :param user_id: from account login
+    :return: None
     """
     print("Thanks for creating your user profile "
           "and logging in for the first time!\n")
