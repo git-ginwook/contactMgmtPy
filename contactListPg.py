@@ -10,25 +10,25 @@ def view_all(user_id: int) -> bool:
     :param: user_id: from account login
     :return: True/False
     """
-    pos: None or int = None
-
-    # open `contacts_db.json`
-    with open(contacts_fp, "r") as r_contacts:
-        contacts_db: list = json.load(r_contacts)
-
-    # check if first time logging in
-    for idx, user in enumerate(contacts_db):
-        if user["user_id"] == user_id:
-            pos = idx
-            break
-
-    # first time logging in
-    if pos is None:
-        # create self profile
-        create_self(contacts_db, user_id)
-        return True
-
     while True:
+        pos: None or int = None
+
+        # open `contacts_db.json`
+        with open(contacts_fp, "r") as r_contacts:
+            contacts_db: list = json.load(r_contacts)
+
+        # check if first time logging in
+        for idx, user in enumerate(contacts_db):
+            if user["user_id"] == user_id:
+                pos = idx
+                break
+
+        # first time logging in
+        if pos is None:
+            # create self profile
+            create_self(contacts_db, user_id)
+            return True
+
         print("[ALL CONTACTS]")
         # read all contacts related to `user_id`
         for contact in contacts_db[pos]["contacts"]:
@@ -47,19 +47,19 @@ def view_all(user_id: int) -> bool:
         elif action == 2:
             read_contact(
                 user_id,
-                int(input("Enter contact_id: "))
+                int(input("Enter contact_id for details: "))
             )      # TODO: validate contact_id
             continue
         elif action == 3:
             update_contact(
                 user_id,
-                int(input("Enter contact_id: "))
+                int(input("Enter contact_id to update: "))
             )       # TODO: validate contact_id
             continue
         elif action == 4:
             delete_contact(
                 user_id,
-                int(input("Enter contact_id: "))
+                int(input("Enter contact_id to delete: "))
             )       # TODO: validate contact_id
             continue
 
@@ -70,7 +70,7 @@ def read_contact(user_id: int, contact_id: int) -> None:
     """
     read and display a select contact
     :param user_id: from account login
-    :param contact_id: asd
+    :param contact_id: from view_all()
     :return: None
     """
     # open `contacts_db.json`
@@ -104,7 +104,7 @@ def update_contact(user_id: int, contact_id: int) -> None:
     """
     update values of select attribute(s) for a select contact
     :param user_id: from account login
-    :param contact_id:
+    :param contact_id: from view_all()
     :return: None
     """
     # open `contacts_db.json`
@@ -159,7 +159,7 @@ def update_contact(user_id: int, contact_id: int) -> None:
                 break
 
     # confirm user action
-    is_accept = input("Enter 1 to accept the change or 2 to cancel")
+    is_accept = input("Enter 1 to accept the change or 2 to cancel: ")
     if is_accept != "1":
         return
 
@@ -213,7 +213,7 @@ def create_contact(user_id: int) -> None:
     }
 
     # confirm user action
-    is_accept = input("Enter 1 to accept the change or 2 to cancel")
+    is_accept = input("Enter 1 to accept the change or 2 to cancel: ")
     if is_accept != "1":
         return
 
@@ -228,6 +228,7 @@ def create_contact(user_id: int) -> None:
         json.dump(contacts_db, w_contacts, indent=4)
     print("Thanks for creating a new contact profile.\n")
 
+    # ask for the subsequent action
     go_stop: str = input("Enter 1 to create another or 2 to stop: ")
     if go_stop == "1":
         create_contact(user_id)
@@ -239,17 +240,57 @@ def delete_contact(user_id: int, contact_id: int) -> None:
     """
     delete a select contact
     :param user_id: from account login
-    :param contact_id:
-    :return:
+    :param contact_id: from view_all()
+    :return: None
     """
+    # prevent user from deleting self profile
+    if contact_id == 0:
+        print("You cannot delete your self profile.\n")
+        return
+
+    # open `contacts_db.json`
+    with open(contacts_fp, "r") as r_contacts:
+        contacts_db: list = json.load(r_contacts)
+
+    # locate `user_id`
+    pos_u: None or int = None
+    for idx, user in enumerate(contacts_db):
+        if user["user_id"] == user_id:
+            pos_u = idx
+            break
+
+    # locate `contact_id`
+    pos_c: None or int = None
+    for idx, contact in enumerate(contacts_db[pos_u]["contacts"]):
+        if contact["contact_id"] == contact_id:
+            pos_c = idx
+            break
+
+    # show contact info
+    contact: dict = contacts_db[pos_u]["contacts"][pos_c]
+    for attr in contact:
+        print(f"{attr}: {contact[attr]}")
+
+    # confirm user action
+    is_accept = input("Enter 1 to accept the change or 2 to cancel: ")
+    if is_accept != "1":
+        return
+
+    # delete from `contacts_db`
+    contacts_db[pos_u]["contacts"].pop(pos_c)
+
+    # apply change(s) to `contacts_db.json`
+    with open(contacts_fp, "w") as w_contacts:
+        json.dump(contacts_db, w_contacts, indent=4)
+    print(f"contact_id: {contact_id} removed successfully.\n")
 
     return
 
 
 def create_self(contacts_db: list, user_id: int) -> None:
     """
-
-    :param contacts_db:
+    user creates a self profile when logging in for the first time
+    :param contacts_db: from view_all()
     :param user_id: from account login
     :return: None
     """
@@ -289,7 +330,7 @@ def create_self(contacts_db: list, user_id: int) -> None:
     }
 
     # confirm user action
-    is_accept = input("Enter 1 to accept the change or 2 to cancel")
+    is_accept = input("Enter 1 to accept the change or 2 to cancel: ")
     if is_accept != "1":
         return
 
@@ -303,8 +344,8 @@ def create_self(contacts_db: list, user_id: int) -> None:
 
 def choose_action() -> int:
     """
-
-    :return:
+    user chooses contact action
+    :return: valid option number
     """
     # choose contact action
     while True:
@@ -333,11 +374,11 @@ def choose_action() -> int:
 
 def val_contact_id() -> int:
     """
-    validation:
+    validate contact id
     - check if user input is an integer
     - check if contact id exists in the database
 
-    :return:
+    :return: validated contact_id
     """
     # TODO: validate contact id input
 
