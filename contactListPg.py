@@ -164,8 +164,8 @@ def create_contact(user_id: int) -> None:
     # create `contact_profile`
     contact_profile: dict = {
         "contact_id": contacts_db[pos_u]["last_contact"] + 1,
-        "f_name": input("First name (required): ").strip(),  # TODO: no empty check 1
-        "l_name": input("Last name (required): ").strip(),  # TODO: no empty check 2
+        "f_name": val_req_attr("f_name"),
+        "l_name": val_req_attr("l_name"),
         "m_name": input("Middle name: ").strip(),
         "phone": input("Phone number: ").strip(),
         "email": input("Email address: ").strip(),
@@ -259,8 +259,8 @@ def create_self(contacts_db: list, user_id: int) -> None:
         "contacts": [
             {
                 "contact_id": 0,
-                "f_name": input("First name (required): ").strip(),  # TODO: no empty check 1
-                "l_name": input("Last name (required): ").strip(),  # TODO: no empty check 2
+                "f_name": val_req_attr("f_name"),
+                "l_name": val_req_attr("l_name"),
                 "m_name": input("Middle name: ").strip(),
                 "phone": input("Phone number: ").strip(),
                 "email": input("Email address: ").strip(),
@@ -368,8 +368,29 @@ def val_contact_id(user_id: int) -> int:
             return contact_id
 
 
-def val_req_attr():
-    pass
+def val_req_attr(req_attr: str) -> str:
+    """
+    validate whether a required attribute is empty
+    :param req_attr: contact attribute name
+    :return: valid user input
+    """
+    user_input: str = ""
+    if req_attr == "f_name":
+        while True:
+            user_input = input("First name (required): ").strip()
+            if user_input == "":
+                print(f"{req_attr} cannot be empty.")
+                continue
+            break
+    elif req_attr == "l_name":
+        while True:
+            user_input = input("Last name (required): ").strip()
+            if user_input == "":
+                print(f"{req_attr} cannot be empty.")
+                continue
+            break
+
+    return user_input
 
 
 if __name__ == '__main__':
