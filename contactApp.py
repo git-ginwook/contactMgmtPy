@@ -52,7 +52,8 @@ def main() -> None:
             elif option == 4:
                 is_login, user = loginPg.access_login()
                 if is_login:
-                    loginPg.delete_login(user)
+                    if loginPg.delete_login(user):
+                        contactListPg.delete_all(user["user_id"])
             elif option == 5:
                 print("Please send your questions or comments to: "
                       "leeginw@oregonstate.edu\n")

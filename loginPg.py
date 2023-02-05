@@ -200,17 +200,19 @@ def change_login(user: dict) -> None:
     return
 
 
-def delete_login(user: dict) -> None:
+def delete_login(user: dict) -> bool:
     """
     delete the current user profile
 
     :param: user profile (logged in)
-    :return: None
+    :return: True/False
     """
     # confirm user action
     while True:
         try:
-            print("Are you sure you want to delete your profile?")
+            print("Are you sure you want to delete your profile?\n"
+                  "You will LOSE ALL CONTACTS "
+                  "associated with this account as well.")
             is_confirm = input("Please enter 1 for YES or 2 for NO: ")
             is_confirm = int(is_confirm)
         except ValueError as val:
@@ -223,7 +225,7 @@ def delete_login(user: dict) -> None:
                 break
             elif is_confirm == 2:
                 print("Great choice - stay with us!\n")
-                return
+                return False
             else:
                 print("Please enter an integer [1 or 2].")
                 continue
@@ -241,10 +243,8 @@ def delete_login(user: dict) -> None:
     with open(user_fp, "w") as w_login:
         json.dump(user_db, w_login, indent=4)
 
-    # TODO: delete contacts associated with the user
-
     print("Your user profile is deleted.\n")
-    return
+    return True
 
 
 def val_username(username: str) -> bool:
