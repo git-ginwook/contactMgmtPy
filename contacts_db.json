@@ -28,7 +28,7 @@
     },
     {
         "user_id": 1,
-        "last_contact": 7,
+        "last_contact": 8,
         "contacts": [
             {
                 "contact_id": 0,
@@ -53,8 +53,8 @@
             },
             {
                 "contact_id": 7,
-                "f_name": "dafkl;j",
-                "l_name": "1jweiof",
+                "f_name": "someone",
+                "l_name": "kind",
                 "m_name": "2ri8qwefij'",
                 "phone": "2i8e",
                 "email": "",

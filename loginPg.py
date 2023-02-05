@@ -22,7 +22,7 @@ def access_login() -> bool and dict:
             password: str = input("Password: ")
 
         except EOFError:
-            raise EOFError("Exit Contact Management App")
+            raise EOFError("[Exit Contact Management App]")
 
         else:
             # read `login_db.json`
@@ -92,7 +92,7 @@ def create_login() -> None:
             print(f"{val}. Please enter an integer [1 or 2].")
             continue
         except EOFError:
-            raise EOFError("Exit Contact Management App")
+            raise EOFError("[Exit Contact Management App]")
         else:
             if is_confirm == 1:
                 break
@@ -171,7 +171,7 @@ def change_login(user: dict) -> None:
             print(f"{val}. Please enter an integer [1 or 2].")
             continue
         except EOFError:
-            raise EOFError("Exit Contact Management App")
+            raise EOFError("[Exit Contact Management App]")
         else:
             if is_confirm == 1:
                 break
@@ -217,7 +217,7 @@ def delete_login(user: dict) -> None:
             print(f"{val}. Please enter an integer [1 or 2].")
             continue
         except EOFError:
-            raise EOFError("Exit Contact Management App")
+            raise EOFError("[Exit Contact Management App]")
         else:
             if is_confirm == 1:
                 break

@@ -6,7 +6,7 @@ contacts_fp: str = './contacts_db.json'
 def view_all(user_id: int) -> bool:
     """
     view all contacts for `user_id`
-    if logging in for the first time, complete self profile
+    if logging in for the first time, user should complete self profile
     :param: user_id: from account login
     :return: True/False
     """
@@ -45,22 +45,13 @@ def view_all(user_id: int) -> bool:
             create_contact(user_id)
             continue
         elif action == 2:
-            read_contact(
-                user_id,
-                int(input("Enter contact_id for details: "))
-            )      # TODO: validate contact_id
+            read_contact(user_id, val_contact_id(user_id))
             continue
         elif action == 3:
-            update_contact(
-                user_id,
-                int(input("Enter contact_id to update: "))
-            )       # TODO: validate contact_id
+            update_contact(user_id, val_contact_id(user_id))
             continue
         elif action == 4:
-            delete_contact(
-                user_id,
-                int(input("Enter contact_id to delete: "))
-            )       # TODO: validate contact_id
+            delete_contact(user_id, val_contact_id(user_id))
             continue
 
         return True
@@ -121,7 +112,7 @@ def update_contact(user_id: int, contact_id: int) -> None:
             print(f"{key}. Please enter a valid attribute.")
             continue
         except EOFError:
-            raise EOFError("Exit Contact Management App")
+            raise EOFError("[Exit Contact Management App]")
         else:
             if attr == "contact_id":
                 print("You cannot change contact_id.")
@@ -325,7 +316,7 @@ def choose_action() -> int:
             print(f"{val}. Please enter an integer [0 ~ 4].")
             continue
         except EOFError:
-            raise EOFError("Exit Contact Management App")
+            raise EOFError("[Exit Contact Management App]")
         else:
             if 0 <= action <= 4:
                 print(f"Your contact action: [{action}]")
@@ -334,15 +325,51 @@ def choose_action() -> int:
                 continue
 
 
-def val_contact_id() -> int:
+def val_contact_id(user_id: int) -> int:
     """
     validate contact id
     - check if user input is an integer
     - check if contact id exists in the database
-
+    :param user_id: from account login
     :return: validated contact_id
     """
-    # TODO: validate contact id input
+    # open `contacts_db.json`
+    with open(contacts_fp, "r") as r_contacts:
+        contacts_db: list = json.load(r_contacts)
+
+    # locate `user_id`
+    pos_u: None or int = None
+    for idx, user in enumerate(contacts_db):
+        if user["user_id"] == user_id:
+            pos_u = idx
+            break
+
+    # list up `contact_id`
+    id_list: list = []
+    for contact in contacts_db[pos_u]["contacts"]:
+        id_list.append(contact["contact_id"])
+
+    # user input validation for `contact_id`
+    while True:
+        try:
+            contact_id = input("Enter contact_id for details: ")
+            contact_id = int(contact_id)
+        except ValueError as val:
+            print(f"{val}. Please enter an integer.")
+            continue
+        except EOFError:
+            raise EOFError("[Exit Contact Management App]")
+        else:
+            if contact_id not in id_list:
+                print(f"Contact id [{contact_id}] doesn't exist. "
+                      "Please enter a valid contact id.")
+                continue
+
+            return contact_id
+
+
+def val_req_attr():
+    pass
 
 
 if __name__ == '__main__':

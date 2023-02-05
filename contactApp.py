@@ -30,7 +30,7 @@ def main() -> None:
             print(f"{val}. Please enter an integer [0 ~ 5].")
             continue
         except EOFError:
-            raise EOFError("Exit Contact Management App")
+            raise EOFError("[Exit Contact Management App]")
         else:
             print(f'Your login option: [{option}]')
             if option == 0:
