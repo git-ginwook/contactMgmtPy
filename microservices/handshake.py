@@ -25,21 +25,22 @@ def handshake(r_user_id: int) -> bool:
     })
 
     # confirm `r_user_id` is not synced yet
-    handshake = db.reference('handshake_db').get()
-    for key in handshake.keys():
-        if handshake[key]['r_user_id'] == r_user_id:
-            print(f"user id [{r_user_id}] for Reminders app is "
-                  f"already synced with user id [{handshake[key]['c_user_id']}] "
-                  f"of Contacts app.")
-            return False
+    handshake_fb = db.reference('handshake_db').get()
+    if handshake_fb is not None:
+        for key in handshake_fb.keys():
+            if handshake_fb[key]['r_user_id'] == r_user_id:
+                print(f"user id [{r_user_id}] for Reminders app is "
+                      f"already synced with user id [{handshake_fb[key]['c_user_id']}] "
+                      f"of Contacts app.\n")
+                return False
 
     # upload the latest `login_db.json` to firebase realtime database
-    with open('../login_db.json', 'r') as r_login:
+    with open('./login_db.json', 'r') as r_login:
         login_db: list = json.load(r_login)
     db.reference('contacts_mgmt').child('login_db').set(login_db)
 
     # upload the latest `contacts_db.json` to firebase realtime database
-    with open('../contacts_db.json', 'r') as r_contacts:
+    with open('./contacts_db.json', 'r') as r_contacts:
         contacts_db: list = json.load(r_contacts)
     db.reference('contacts_mgmt').child('contacts_db').set(contacts_db)
 
@@ -48,11 +49,11 @@ def handshake(r_user_id: int) -> bool:
     password: str = input("Enter password: ")
 
     # get the latest login profiles
-    login = db.reference('contacts_mgmt').child('login').get()
+    login_fb = db.reference('contacts_mgmt').child('login_db').get()
 
     # find matching user profile in Contacts app
     c_user_id: None or int = None
-    for c_user in login:
+    for c_user in login_fb:
         if c_user['username'] == username and c_user['password'] == password:
             c_user_id = c_user['user_id']
             break
@@ -60,16 +61,17 @@ def handshake(r_user_id: int) -> bool:
     # no user profile found in Contacts app
     if c_user_id is None:
         print(f"username: [{username}] and password [{password}] "
-              f"didn't match with a user profile in Contacts app.")
+              f"didn't match with a user profile in Contacts app.\n")
         return False
 
     # confirm `c_user_id` is not synced yet
-    for key in handshake.keys():
-        if handshake[key]['c_user_id'] == c_user_id:
-            print(f"user id [{c_user_id}] for Contacts app is "
-                  f"already synced with user id [{handshake[key]['r_user_id']}] "
-                  f"of Reminders app.")
-            return False
+    if handshake_fb is not None:
+        for key in handshake_fb.keys():
+            if handshake_fb[key]['c_user_id'] == c_user_id:
+                print(f"user id [{c_user_id}] for Contacts app is "
+                      f"already synced with user id [{handshake_fb[key]['r_user_id']}] "
+                      f"of Reminders app.\n")
+                return False
 
     # update `handshake_db`
     db.reference('handshake_db').push({
@@ -81,7 +83,7 @@ def handshake(r_user_id: int) -> bool:
 
 
 if __name__ == '__main__':
-    # TODO: need to take handshake request with r_user_id
-    request_from_reminder = 1
-    # TODO: need to return status as a response
-    handshake(request_from_reminder)
+    while True:
+        print("handshake microservice is running...\n")
+        request_from_reminder: int = int(input("Enter user id of Reminders app: "))
+        is_synced: bool = handshake(request_from_reminder)
