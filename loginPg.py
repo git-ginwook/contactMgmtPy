@@ -1,8 +1,22 @@
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
 import json
 
 
-# filepath to login database
+# filepath to login database    # TODO: delete after connecting to Firebase
 user_fp: str = './login_db.json'
+
+# refer to the credential key (json file)
+cred = credentials.Certificate(
+    "/Users/ginwooklee_air/Library/CloudStorage/Box-Box/6_Winter23/CS361/contactMgmtPy"
+    "/microservices/contactsmgmt-8647c-firebase-adminsdk-8c4vb-12ede2dd14.json"
+)
+
+# initialize `firebase_admin`
+firebase_admin.initialize_app(cred, {
+    'databaseURL': "https://contactsmgmt-8647c-default-rtdb.firebaseio.com/"
+})
 
 
 def access_login() -> bool and dict:
@@ -25,11 +39,14 @@ def access_login() -> bool and dict:
             raise EOFError("[Exit Contact Management App]")
 
         else:
-            # read `login_db.json`
-            with open(user_fp, "r") as r_login:
-                user_db: list = json.load(r_login)
+            # convert collections object to dict
+            login_db = json.loads(
+                json.dumps(
+                    db.reference('contacts_mgmt').child('login_db').get()
+                )
+            )
 
-            for profile in user_db:
+            for profile in login_db.values():
                 if profile["username"] == username and \
                         profile["password"] == password:
                     print("Login was successful!\n")
