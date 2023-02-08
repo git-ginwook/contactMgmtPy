@@ -1,24 +1,6 @@
-import firebase_admin
-from firebase_admin import credentials
 from firebase_admin import db
 import json
-
-
-# filepath to login database    # TODO: delete after connecting to Firebase
-user_fp: str = './login_db.json'
-
-# refer to the credential key (json file)
-CRED = credentials.Certificate(
-    "/Users/ginwooklee_air/Library/CloudStorage/Box-Box/6_Winter23/CS361/contactMgmtPy"
-    "/microservices/contactsmgmt-8647c-firebase-adminsdk-8c4vb-12ede2dd14.json"
-)
-
-# initialize `firebase_admin`
-firebase_admin.initialize_app(CRED, {
-    'databaseURL': "https://contactsmgmt-8647c-default-rtdb.firebaseio.com/"
-})
-
-# path to admin info
+# login admin key
 LOGIN_ADMIN = "-NNlN7pcoRbhldry0ZYs"
 
 
@@ -162,6 +144,11 @@ def change_login(user: dict) -> None:
     - profile: user profile (logged in)
     :return: None
     """
+    # not allowed to change admin
+    if user['username'] == 'admin':
+        print("You cannot change the admin account.\n")
+        return
+
     # change username and/or password
     print("Update username and password.")
     print("RULES:")
@@ -175,9 +162,6 @@ def change_login(user: dict) -> None:
     # validate new username
     username: str = input("Username: ")
     if not val_username(username):
-        return
-    if username == 'admin':
-        print("You cannot change the admin account.\n")
         return
 
     # validate new password
