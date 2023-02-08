@@ -8,18 +8,18 @@ import json
 user_fp: str = './login_db.json'
 
 # refer to the credential key (json file)
-cred = credentials.Certificate(
+CRED = credentials.Certificate(
     "/Users/ginwooklee_air/Library/CloudStorage/Box-Box/6_Winter23/CS361/contactMgmtPy"
     "/microservices/contactsmgmt-8647c-firebase-adminsdk-8c4vb-12ede2dd14.json"
 )
 
 # initialize `firebase_admin`
-firebase_admin.initialize_app(cred, {
+firebase_admin.initialize_app(CRED, {
     'databaseURL': "https://contactsmgmt-8647c-default-rtdb.firebaseio.com/"
 })
 
 # path to admin info
-admin_key = "-NNlN7pcoRbhldry0ZYs"
+LOGIN_ADMIN = "-NNlN7pcoRbhldry0ZYs"
 
 
 def access_login() -> bool and dict:
@@ -131,13 +131,13 @@ def create_login() -> None:
     )
 
     # increment `last_user_id`
-    db.reference('contacts_mgmt').child('login_db').child(admin_key).update({
-        'last_user_id': login_db[admin_key]['last_user_id'] + 1
+    db.reference('contacts_mgmt').child('login_db').child(LOGIN_ADMIN).update({
+        'last_user_id': login_db[LOGIN_ADMIN]['last_user_id'] + 1
     })
 
     # push new login profile
     new_profile: dict = {
-        "user_id": login_db[admin_key]['last_user_id'] + 1,
+        "user_id": login_db[LOGIN_ADMIN]['last_user_id'] + 1,
         "username": username,
         "password": password
     }
@@ -255,18 +255,17 @@ def delete_login(user: dict) -> bool:
                 print("Please enter an integer [1 or 2].")
                 continue
 
-    # read `login_db.json`
-    with open(user_fp, "r") as r_login:
-        user_db: list = json.load(r_login)
+    # convert collections object to dict
+    login_db: dict = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('login_db').get()
+        )
+    )
 
     # remove the current user
-    for idx, profile in enumerate(user_db):
-        if profile["user_id"] == user["user_id"]:
-            user_db.pop(idx)
-
-    # write updated `user_db` to `login_db.json`
-    with open(user_fp, "w") as w_login:
-        json.dump(user_db, w_login, indent=4)
+    for key, val in login_db.items():
+        if val['user_id'] == user['user_id']:
+            db.reference('contacts_mgmt').child('login_db').child(key).delete()
 
     print("Your user profile is deleted.\n")
     return True
