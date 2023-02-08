@@ -1,7 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials
 import loginPg
-import contactListPg
+import contactsPg
 
 
 def main() -> None:
@@ -42,8 +42,8 @@ def main() -> None:
 
                 # access contacts for `user_id`
                 if is_login:
-                    if contactListPg.view_all(user["user_id"]):
-                        contactListPg.view_all(user["user_id"])
+                    if contactsPg.view_all(user["user_id"]):
+                        contactsPg.view_all(user["user_id"])
 
             elif option == 2:
                 loginPg.create_login()
@@ -55,7 +55,7 @@ def main() -> None:
                 is_login, user = loginPg.access_login()
                 if is_login:
                     if loginPg.delete_login(user):
-                        contactListPg.delete_all(user["user_id"])
+                        contactsPg.delete_all(user["user_id"])
             elif option == 5:
                 print("Please send your questions or comments to: "
                       "leeginw@oregonstate.edu\n")
