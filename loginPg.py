@@ -18,6 +18,9 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': "https://contactsmgmt-8647c-default-rtdb.firebaseio.com/"
 })
 
+# path to admin info
+admin_key = "-NNlN7pcoRbhldry0ZYs"
+
 
 def access_login() -> bool and dict:
     """
@@ -120,23 +123,25 @@ def create_login() -> None:
                 print("Please enter an integer [1 or 2].")
                 continue
 
-    # read `login_db.json`
-    with open(user_fp, "r") as r_login:
-        user_db: list = json.load(r_login)
+    # convert collections object to dict
+    login_db = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('login_db').get()
+        )
+    )
 
-    user_db[0]["last_user_id"] += 1
+    # increment `last_user_id`
+    db.reference('contacts_mgmt').child('login_db').child(admin_key).update({
+        'last_user_id': login_db[admin_key]['last_user_id'] + 1
+    })
 
-    # append new profile
+    # push new login profile
     new_profile: dict = {
-        "user_id": user_db[0]["last_user_id"],
+        "user_id": login_db[admin_key]['last_user_id'] + 1,
         "username": username,
         "password": password
     }
-    user_db.append(new_profile)
-
-    # write new profile to `login_db.json`
-    with open(user_fp, "w") as w_login:
-        json.dump(user_db, w_login, indent=4)
+    db.reference('contacts_mgmt').child('login_db').push(new_profile)
 
     print(f"Created a new user profile for '{username}'.\n")
     return
