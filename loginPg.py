@@ -43,7 +43,7 @@ def access_login() -> bool and dict:
 
         else:
             # convert collections object to dict
-            login_db = json.loads(
+            login_db: dict = json.loads(
                 json.dumps(
                     db.reference('contacts_mgmt').child('login_db').get()
                 )
@@ -124,7 +124,7 @@ def create_login() -> None:
                 continue
 
     # convert collections object to dict
-    login_db = json.loads(
+    login_db: dict = json.loads(
         json.dumps(
             db.reference('contacts_mgmt').child('login_db').get()
         )
@@ -174,13 +174,15 @@ def change_login(user: dict) -> None:
 
     # validate new username
     username: str = input("Username: ")
-    if len(username) > 24:
+    if not val_username(username):
+        return
+    if username == 'admin':
+        print("You cannot change the admin account.\n")
         return
 
     # validate new password
     password: str = input("Password: ")
-    is_val = val_password(password)
-    if not is_val:
+    if not val_password(password):
         return
 
     # confirm user action
@@ -204,19 +206,20 @@ def change_login(user: dict) -> None:
                 print("Please enter an integer [1 or 2].")
                 continue
 
-    # read `login_db.json`
-    with open(user_fp, "r") as r_login:
-        user_db: list = json.load(r_login)
+    # convert collections object to dict
+    login_db: dict = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('login_db').get()
+        )
+    )
 
     # update the current user
-    for profile in user_db:
-        if profile["user_id"] == user["user_id"]:
-            profile["username"] = username
-            profile["password"] = password
-
-    # write updated `user_db` to `login_db.json`
-    with open(user_fp, "w") as w_login:
-        json.dump(user_db, w_login, indent=4)
+    for key, val in login_db.items():
+        if val["user_id"] == user["user_id"]:
+            db.reference('contacts_mgmt').child('login_db').child(key).update({
+                'username': username,
+                'password': password
+            })
 
     print("Your user profile is updated.\n")
     return
@@ -320,7 +323,7 @@ def val_password(password: str) -> bool:
     if is_length and has_symbol and has_num and has_upper:
         return True
 
-    print("Invalid password. Please follow the rules for password.")
+    print("Invalid password. Please follow the rules for password.\n")
     return False
 
 
