@@ -1,3 +1,5 @@
+import firebase_admin
+from firebase_admin import credentials
 import loginPg
 import contactListPg
 
@@ -65,4 +67,15 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    # refer to the credential key (json file)
+    CRED = credentials.Certificate(
+        "/Users/ginwooklee_air/Library/CloudStorage/Box-Box/6_Winter23/CS361/contactMgmtPy"
+        "/microservices/contactsmgmt-8647c-firebase-adminsdk-8c4vb-12ede2dd14.json"
+    )
+
+    # initialize `firebase_admin`
+    firebase_admin.initialize_app(CRED, {
+        'databaseURL': "https://contactsmgmt-8647c-default-rtdb.firebaseio.com/"
+    })
+
     main()
