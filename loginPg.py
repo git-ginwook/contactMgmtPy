@@ -216,6 +216,11 @@ def delete_login(user: dict) -> bool:
     :param: user profile (logged in)
     :return: True/False
     """
+    # not allowed to delete admin
+    if user['username'] == 'admin':
+        print("You cannot delete the admin account.\n")
+        return False
+
     # confirm user action
     while True:
         try:
