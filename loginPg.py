@@ -276,18 +276,22 @@ def val_username(username: str) -> bool:
     :param: username from user input
     :return: True or False
     """
-    # read `login_db.json`
-    with open(user_fp, "r") as r_login:
-        user_db: list = json.load(r_login)
+    # convert collections object to dict
+    login_db = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('login_db').get()
+        )
+    )
 
     # username validation (unique and length)
     if len(username) > 24:
         return False
 
-    for profile in user_db:
+    # check whether `username` already exists
+    for profile in login_db.values():
         if profile["username"] == username:
             print(f"'{username}' already exists. "
-                  f"Please use a different username.")
+                  f"Please use a different username.\n")
             return False
 
     return True
