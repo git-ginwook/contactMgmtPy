@@ -6,7 +6,7 @@ LOGIN_ADMIN = "-NNlN7pcoRbhldry0ZYs"
 
 def access_login() -> bool and dict:
     """
-    login username and password in `login_db.json`
+    login with username and password
 
     :return: True/False, user profile
     """

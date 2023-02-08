@@ -34,11 +34,6 @@ def handshake(r_user_id: int) -> bool:
                       f"of Contacts app.\n")
                 return False
 
-    # upload the latest `login_db.json` to firebase realtime database
-    with open('./login_db.json', 'r') as r_login:
-        login_db: list = json.load(r_login)
-    db.reference('contacts_mgmt').child('login_db').set(login_db)
-
     # upload the latest `contacts_db.json` to firebase realtime database
     with open('./contacts_db.json', 'r') as r_contacts:
         contacts_db: list = json.load(r_contacts)
