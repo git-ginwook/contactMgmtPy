@@ -51,48 +51,40 @@ def view_all(user_id: int) -> bool:
             return False
         elif action == 1:
             create_contact(user_pos)
+            continue
         elif action == 2:
-            read_contact(user_id, val_contact_id(user_pos))
+            read_contact(user_pos, val_contact_id(user_pos))
+            continue
         elif action == 3:
             update_contact(user_pos, val_contact_id(user_pos))
+            continue
         elif action == 4:
             delete_contact(user_id, val_contact_id(user_pos))
+            continue
         return True
 
 
-def read_contact(user_id: int, contact_id: int) -> \
-        list and dict and int and int:
+def read_contact(user_pos: str, contact_pos: str) -> str:
     """
     read and display a select contact
-    :param user_id: from account login
-    :param contact_id: from view_all()
-    :return: contacts_db, select contact, user position, contact position
+    :param user_pos: from view_all()
+    :param contact_pos: from val_contact_id()
+    :return: contact position
     """
-    # open `contacts_db.json`
-    with open(contacts_fp, "r") as r_contacts:
-        contacts_db: list = json.load(r_contacts)
+    # get contact details
+    contact: dict = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('contacts_db').
+            child(user_pos).child('contacts').child(contact_pos).get()
+        )
+    )
 
-    # locate `user_id`
-    pos_u: None or int = None
-    for idx, user in enumerate(contacts_db):
-        if user["user_id"] == user_id:
-            pos_u = idx
-            break
-
-    # locate `contact_id`
-    pos_c: None or int = None
-    for idx, contact in enumerate(contacts_db[pos_u]["contacts"]):
-        if contact["contact_id"] == contact_id:
-            pos_c = idx
-            break
-
-    # show contact info
-    contact: dict = contacts_db[pos_u]["contacts"][pos_c]
-    for attr in contact:
-        print(f"    {attr}: {contact[attr]}")
+    # display contact details
+    for key, val in contact.items():
+        print(f"    {key}: {val}")
     print("\n")
 
-    return contacts_db, contact, pos_u, pos_c
+    return contact_pos
 
 
 def update_contact(user_pos: str, contact_pos: str) -> None:
@@ -366,22 +358,7 @@ def val_contact_id(user_pos: str) -> str:
     :param user_pos: from account login
     :return: validated contact_id
     """
-    # # open `contacts_db.json`
-    # with open(contacts_fp, "r") as r_contacts:
-    #     contacts_db: list = json.load(r_contacts)
-    #
-    # # locate `user_id`
-    # pos_u: None or int = None
-    # for idx, user in enumerate(contacts_db):
-    #     if user["user_id"] == user_id:
-    #         pos_u = idx
-    #         break
-    #
-    # # list up `contact_id`
-    # id_list: list = []
-    # for contact in contacts_db[pos_u]["contacts"]:
-    #     id_list.append(contact["contact_id"])
-
+    # get user's contacts
     contacts: dict = json.loads(
         json.dumps(
             db.reference('contacts_mgmt').child('contacts_db').child(user_pos).child('contacts').get()
