@@ -13,7 +13,7 @@ def view_all(user_id: int) -> bool:
     :return: True/False
     """
     while True:
-        pos: None or str = None
+        user_pos: None or str = None
 
         # identify the position of contacts profile for `user_id`
         contacts_db: dict = json.loads(
@@ -23,11 +23,11 @@ def view_all(user_id: int) -> bool:
         )
         for key, val in contacts_db.items():
             if val['user_id'] == user_id:
-                pos = key
+                user_pos = key
                 break
 
         # check if first time logging in
-        if pos is None:
+        if user_pos is None:
             # create self profile
             create_self(user_id)
             return True
@@ -36,7 +36,7 @@ def view_all(user_id: int) -> bool:
         print("[ALL CONTACTS]")
         contacts: dict = json.loads(
             json.dumps(
-                db.reference('contacts_mgmt').child('contacts_db').child(pos).child('contacts').get()
+                db.reference('contacts_mgmt').child('contacts_db').child(user_pos).child('contacts').get()
             )
         )
         for contact in contacts.values():
@@ -50,13 +50,13 @@ def view_all(user_id: int) -> bool:
         if action == 0:
             return False
         elif action == 1:
-            create_contact(pos)
+            create_contact(user_pos)
         elif action == 2:
-            read_contact(user_id, val_contact_id(user_id))
+            read_contact(user_id, val_contact_id(user_pos))
         elif action == 3:
-            update_contact(user_id, val_contact_id(user_id))
+            update_contact(user_pos, val_contact_id(user_pos))
         elif action == 4:
-            delete_contact(user_id, val_contact_id(user_id))
+            delete_contact(user_id, val_contact_id(user_pos))
         return True
 
 
@@ -95,11 +95,11 @@ def read_contact(user_id: int, contact_id: int) -> \
     return contacts_db, contact, pos_u, pos_c
 
 
-def update_contact(user_id: int, contact_id: int) -> None:
+def update_contact(user_pos: str, contact_pos: str) -> None:
     """
     update values of select attribute(s) for a select contact
-    :param user_id: from account login
-    :param contact_id: from view_all()
+    :param user_pos: from account login
+    :param contact_pos: from val_contact_id()
     :return: None
     """
     # show select contact profile
@@ -147,15 +147,15 @@ def update_contact(user_id: int, contact_id: int) -> None:
     return
 
 
-def create_contact(pos: str) -> None:
+def create_contact(user_pos: str) -> None:
     """
     create a new contact profile
-    :param pos: from account login
+    :param user_pos: from account login
     :return: None
     """
     contacts_attr: dict = json.loads(
         json.dumps(
-            db.reference('contacts_mgmt').child('contacts_db').child(pos).get()
+            db.reference('contacts_mgmt').child('contacts_db').child(user_pos).get()
         )
     )
     new_contact_id: int = contacts_attr['last_contact_id'] + 1
@@ -190,15 +190,15 @@ def create_contact(pos: str) -> None:
         return
 
     # # append `contact_profile`
-    db.reference('contacts_mgmt').child('contacts_db').child(pos).child('contacts').push(contact_profile)
+    db.reference('contacts_mgmt').child('contacts_db').child(user_pos).child('contacts').push(contact_profile)
 
     # # increment `last_contact_id`
-    db.reference('contacts_mgmt').child('contacts_db').child(pos).update({'last_contact_id': new_contact_id})
+    db.reference('contacts_mgmt').child('contacts_db').child(user_pos).update({'last_contact_id': new_contact_id})
 
     # ask for the subsequent action
     go_stop: str = input("Enter 1 to create another or 2 to stop: ")
     if go_stop == "1":
-        create_contact(pos)
+        create_contact(user_pos)
     print("\n")
     return
 
@@ -240,7 +240,7 @@ def create_self(user_id: int) -> None:
     :param user_id: from account login
     :return: None
     """
-    pos: None or str = None
+    user_pos: None or str = None
 
     print("Thanks for creating your user profile "
           "and logging in for the first time!\n")
@@ -291,11 +291,11 @@ def create_self(user_id: int) -> None:
     )
     for key, val in contacts_db.items():
         if val['user_id'] == user_id:
-            pos = key
+            user_pos = key
             break
 
     # update self profile to the new contacts profile
-    db.reference('contacts_mgmt').child('contacts_db').child(pos).child('contacts').push(self_profile)
+    db.reference('contacts_mgmt').child('contacts_db').child(user_pos).child('contacts').push(self_profile)
     print("Thanks for completing your profile.\n")
     return
 
@@ -358,29 +358,35 @@ def choose_action() -> int:
                 continue
 
 
-def val_contact_id(user_id: int) -> int:
+def val_contact_id(user_pos: str) -> str:
     """
     validate contact id
     - check if user input is an integer
     - check if contact id exists in the database
-    :param user_id: from account login
+    :param user_pos: from account login
     :return: validated contact_id
     """
-    # open `contacts_db.json`
-    with open(contacts_fp, "r") as r_contacts:
-        contacts_db: list = json.load(r_contacts)
+    # # open `contacts_db.json`
+    # with open(contacts_fp, "r") as r_contacts:
+    #     contacts_db: list = json.load(r_contacts)
+    #
+    # # locate `user_id`
+    # pos_u: None or int = None
+    # for idx, user in enumerate(contacts_db):
+    #     if user["user_id"] == user_id:
+    #         pos_u = idx
+    #         break
+    #
+    # # list up `contact_id`
+    # id_list: list = []
+    # for contact in contacts_db[pos_u]["contacts"]:
+    #     id_list.append(contact["contact_id"])
 
-    # locate `user_id`
-    pos_u: None or int = None
-    for idx, user in enumerate(contacts_db):
-        if user["user_id"] == user_id:
-            pos_u = idx
-            break
-
-    # list up `contact_id`
-    id_list: list = []
-    for contact in contacts_db[pos_u]["contacts"]:
-        id_list.append(contact["contact_id"])
+    contacts: dict = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('contacts_db').child(user_pos).child('contacts').get()
+        )
+    )
 
     # user input validation for `contact_id`
     while True:
@@ -393,12 +399,12 @@ def val_contact_id(user_id: int) -> int:
         except EOFError:
             raise EOFError("[Exit Contact Management App]")
         else:
-            if contact_id not in id_list:
-                print(f"Contact id [{contact_id}] doesn't exist. "
-                      "Please enter a valid contact id.")
-                continue
+            for key, val in contacts.items():
+                if val['contact_id'] == contact_id:
+                    return key
 
-            return contact_id
+            print(f"Contact id [{contact_id}] doesn't exist. "
+                  "Please enter a valid contact id.")
 
 
 def val_req_attr(req_attr: str) -> str:
