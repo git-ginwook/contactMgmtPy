@@ -314,25 +314,19 @@ def delete_all(user_id: int) -> None:
     :param user_id: from account login
     :return: None
     """
-    # open `contacts_db.json`
-    with open(contacts_fp, "r") as r_contacts:
-        contacts_db: list = json.load(r_contacts)
-
     # locate `user_id`
-    pos_u: None or int = None
-    for idx, user in enumerate(contacts_db):
-        if user["user_id"] == user_id:
-            pos_u = idx
+    contacts_db: dict = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('contacts_db').get()
+        )
+    )
+    for key, val in contacts_db.items():
+        if val['user_id'] == user_id:
+            # delete all contacts associated with `user_id`
+            db.reference('contacts_mgmt').child('contacts_db').child(key).delete()
             break
 
-    # delete all contacts associated with `user_id`
-    contacts_db.pop(pos_u)
-
-    # update `contacts_db.json`
-    with open(contacts_fp, "w") as w_contacts:
-        json.dump(contacts_db, w_contacts, indent=4)
     print(f"All contacts deleted.\n")
-
     return
 
 
