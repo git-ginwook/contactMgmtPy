@@ -1,6 +1,8 @@
+from firebase_admin import db
 import json
 
 contacts_fp: str = './contacts_db.json'
+CONTACTS_ADMIN = '-NNlh7tcSVNFgf1HRqa1'
 
 
 def view_all(user_id: int) -> bool:
@@ -11,28 +13,34 @@ def view_all(user_id: int) -> bool:
     :return: True/False
     """
     while True:
-        pos: None or int = None
+        pos: None or str = None
 
-        # open `contacts_db.json`
-        with open(contacts_fp, "r") as r_contacts:
-            contacts_db: list = json.load(r_contacts)
-
-        # check if first time logging in
-        for idx, user in enumerate(contacts_db):
-            if user["user_id"] == user_id:
-                pos = idx
+        # identify the position of contacts profile for `user_id`
+        contacts_db: dict = json.loads(
+            json.dumps(
+                db.reference('contacts_mgmt').child('contacts_db').get()
+            )
+        )
+        for key, val in contacts_db.items():
+            if val['user_id'] == user_id:
+                pos = key
                 break
 
-        # first time logging in
+        # check if first time logging in
         if pos is None:
             # create self profile
-            create_self(contacts_db, user_id)
+            create_self(user_id)
             return True
 
-        print("[ALL CONTACTS]")
         # read all contacts related to `user_id`
-        for contact in contacts_db[pos]["contacts"]:
-            print(f"    ID: {contact['contact_id']} | "
+        print("[ALL CONTACTS]")
+        contacts: dict = json.loads(
+            json.dumps(
+                db.reference('contacts_mgmt').child('contacts_db').child(pos).child('contacts').get()
+            )
+        )
+        for contact in contacts.values():
+            print(f"ID: {contact['contact_id']} | "
                   f"Name: {contact['f_name']} {contact['l_name']}")
         print("\n")
 
@@ -240,13 +248,14 @@ def delete_contact(user_id: int, contact_id: int) -> None:
     return
 
 
-def create_self(contacts_db: list, user_id: int) -> None:
+def create_self(user_id: int) -> None:
     """
     user creates a self profile when logging in for the first time
-    :param contacts_db: from view_all()
     :param user_id: from account login
     :return: None
     """
+    pos: None or str = None
+
     print("Thanks for creating your user profile "
           "and logging in for the first time!\n")
 
@@ -254,32 +263,26 @@ def create_self(contacts_db: list, user_id: int) -> None:
     print("Please fill out your profile before "
           "adding other contacts!\n")
     self_profile: dict = {
-        "user_id": user_id,
-        "last_contact": 0,
-        "contacts": [
-            {
-                "contact_id": 0,
-                "f_name": val_req_attr("f_name"),
-                "l_name": val_req_attr("l_name"),
-                "m_name": input("Middle name: ").strip(),
-                "phone": input("Phone number: ").strip(),
-                "email": input("Email address: ").strip(),
-                "address": input("Home address: ").strip(),
-                "homepage": input("Homepage: ").strip(),
-                "company": input("Company: ").strip(),
-                "department": input("Department: ").strip(),
-                "title": input("Title: ").strip(),
-                "work phone": input("Work phone: ").strip(),
-                "work address": input("Work address: ").strip(),
-                "memo": input("Memo: ").strip(),
-                # TODO: GET request from Reminders app
-                "reminder_1": "",  # from reminders app
-                "reminder_2": "",  # from reminders app
-                "reminder_3": "",  # from reminders app
-                "reminder_4": "",  # from reminders app
-                "reminder_5": ""  # from reminders app
-            }
-        ]
+        "contact_id": 0,
+        "f_name": val_req_attr("f_name"),
+        "l_name": val_req_attr("l_name"),
+        "m_name": input("Middle name: ").strip(),
+        "phone": input("Phone number: ").strip(),
+        "email": input("Email address: ").strip(),
+        "address": input("Home address: ").strip(),
+        "homepage": input("Homepage: ").strip(),
+        "company": input("Company: ").strip(),
+        "department": input("Department: ").strip(),
+        "title": input("Title: ").strip(),
+        "work phone": input("Work phone: ").strip(),
+        "work address": input("Work address: ").strip(),
+        "memo": input("Memo: ").strip(),
+        # TODO: GET request from Reminders app
+        "reminder_1": "",  # from reminders app
+        "reminder_2": "",  # from reminders app
+        "reminder_3": "",  # from reminders app
+        "reminder_4": "",  # from reminders app
+        "reminder_5": ""  # from reminders app
     }
 
     # confirm user action
@@ -287,10 +290,26 @@ def create_self(contacts_db: list, user_id: int) -> None:
     if is_accept != "1":
         return
 
-    # write to `contacts_db.json`
-    contacts_db.append(self_profile)
-    with open(contacts_fp, "w") as w_contacts:
-        json.dump(contacts_db, w_contacts, indent=4)
+    # create a new contacts profile for `user_id`
+    db.reference('contacts_mgmt').child('contacts_db').push({
+        'user_id': user_id,
+        'last_contact_id': 0,
+        'contacts': None
+    })
+
+    # identify the position of new contacts profile
+    contacts_db: dict = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('contacts_db').get()
+        )
+    )
+    for key, val in contacts_db.items():
+        if val['user_id'] == user_id:
+            pos = key
+            break
+
+    # update self profile to the new contacts profile
+    db.reference('contacts_mgmt').child('contacts_db').child(pos).child('contacts').push(self_profile)
     print("Thanks for completing your profile.\n")
     return
 
