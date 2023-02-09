@@ -50,18 +50,13 @@ def view_all(user_id: int) -> bool:
         if action == 0:
             return False
         elif action == 1:
-            create_contact(user_id)
-            continue
+            create_contact(pos)
         elif action == 2:
             read_contact(user_id, val_contact_id(user_id))
-            continue
         elif action == 3:
             update_contact(user_id, val_contact_id(user_id))
-            continue
         elif action == 4:
             delete_contact(user_id, val_contact_id(user_id))
-            continue
-
         return True
 
 
@@ -152,26 +147,22 @@ def update_contact(user_id: int, contact_id: int) -> None:
     return
 
 
-def create_contact(user_id: int) -> None:
+def create_contact(pos: str) -> None:
     """
     create a new contact profile
-    :param user_id: from account login
+    :param pos: from account login
     :return: None
     """
-    # read `contacts_db.json`
-    with open(contacts_fp, "r") as r_contacts:
-        contacts_db: list = json.load(r_contacts)
-
-    # locate `user_id`
-    pos_u: None or int = None
-    for idx, user in enumerate(contacts_db):
-        if user["user_id"] == user_id:
-            pos_u = idx
-            break
+    contacts_attr: dict = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('contacts_db').child(pos).get()
+        )
+    )
+    new_contact_id: int = contacts_attr['last_contact_id'] + 1
 
     # create `contact_profile`
     contact_profile: dict = {
-        "contact_id": contacts_db[pos_u]["last_contact"] + 1,
+        "contact_id": new_contact_id,
         "f_name": val_req_attr("f_name"),
         "l_name": val_req_attr("l_name"),
         "m_name": input("Middle name: ").strip(),
@@ -198,22 +189,17 @@ def create_contact(user_id: int) -> None:
     if is_accept != "1":
         return
 
-    # append `contact_profile`
-    contacts_db[pos_u]["contacts"].append(contact_profile)
+    # # append `contact_profile`
+    db.reference('contacts_mgmt').child('contacts_db').child(pos).child('contacts').push(contact_profile)
 
-    # increment `last_contact`
-    contacts_db[pos_u]["last_contact"] += 1
-
-    # write new `contact_profile` to `contacts_db.json`
-    with open(contacts_fp, "w") as w_contacts:
-        json.dump(contacts_db, w_contacts, indent=4)
-    print("Thanks for creating a new contact profile.\n")
+    # # increment `last_contact_id`
+    db.reference('contacts_mgmt').child('contacts_db').child(pos).update({'last_contact_id': new_contact_id})
 
     # ask for the subsequent action
     go_stop: str = input("Enter 1 to create another or 2 to stop: ")
     if go_stop == "1":
-        create_contact(user_id)
-
+        create_contact(pos)
+    print("\n")
     return
 
 
