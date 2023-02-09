@@ -90,31 +90,44 @@ def read_contact(user_pos: str, contact_pos: str) -> str:
 def update_contact(user_pos: str, contact_pos: str) -> None:
     """
     update values of select attribute(s) for a select contact
-    :param user_pos: from account login
+    :param user_pos: from view_all()
     :param contact_pos: from val_contact_id()
     :return: None
     """
-    # show select contact profile
-    contacts_db, contact, pos_u, pos_c = read_contact(user_id, contact_id)
+    # display select contact details
+    read_contact(user_pos, contact_pos)
 
+    # get contact details
+    contact: dict = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('contacts_db').
+            child(user_pos).child('contacts').child(contact_pos).get()
+        )
+    )
     # get user input to update contact
     while True:
         try:
-            attr: str = input("Enter an attribute to change: ")
-            key_test: str = contact[attr]
-            change: str = input(f"Enter new value for {attr}: ").strip()
+            attr = input("Enter an attribute to change: ")
+            cur_val: str = contact[attr]
+            new_val = input(f"Enter new value for [{attr}]: ").strip()
         except KeyError as key:
-            print(f"{key}. Please enter a valid attribute.")
+            print(f"{key}. Please enter a valid attribute.\n")
             continue
         except EOFError:
             raise EOFError("[Exit Contact Management App]")
         else:
             if attr == "contact_id":
-                print("You cannot change contact_id.")
+                print("You cannot change [contact_id].\n")
+                continue
+            elif attr[:8] == "reminder":
+                print("You cannot change [reminder_#].\n")
+                continue
+            elif cur_val == new_val:
+                print("You entered the same value as the current one."
+                      "Please try again.\n")
                 continue
             else:
-                if key_test != change:
-                    contact[attr] = change
+                contact[attr] = new_val
 
             go_stop = input("Enter 1 to continue change or 2 to stop: ")
             if go_stop == "1":
@@ -122,20 +135,20 @@ def update_contact(user_pos: str, contact_pos: str) -> None:
             elif go_stop == "2":
                 break
             else:
-                print("Invalid option. Please enter 1 or 2.")
+                print("Invalid option. Please enter 1 or 2.\n")
                 break
 
     # confirm user action
-    is_accept = input("Enter 1 to accept the change or 2 to cancel: ")
+    is_accept = input("Enter 1 to accept the change(s) or 2 to cancel: ")
     if is_accept != "1":
         print("Cancel al the change(s) made.\n")
         return
 
-    # update `contacts_db.json`
-    with open(contacts_fp, "w") as w_contacts:
-        json.dump(contacts_db, w_contacts, indent=4)
+    # update contact details
+    db.reference('contacts_mgmt').child('contacts_db').\
+        child(user_pos).child('contacts').\
+        child(contact_pos).update(contact)
     print("Thanks for the update.\n")
-
     return
 
 
