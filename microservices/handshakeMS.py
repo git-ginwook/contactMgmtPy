@@ -80,5 +80,6 @@ def handshake(r_user_id: int) -> bool:
 if __name__ == '__main__':
     while True:
         print("handshake microservice is running...\n")
+        # TODO: feed `reminder_id` from Reminders app
         request_from_reminder: int = int(input("Enter user id of Reminders app: "))
         is_synced: bool = handshake(request_from_reminder)
