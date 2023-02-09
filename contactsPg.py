@@ -59,7 +59,7 @@ def view_all(user_id: int) -> bool:
             update_contact(user_pos, val_contact_id(user_pos))
             continue
         elif action == 4:
-            delete_contact(user_id, val_contact_id(user_pos))
+            delete_contact(user_pos, val_contact_id(user_pos))
             continue
         return True
 
@@ -78,6 +78,8 @@ def read_contact(user_pos: str, contact_pos: str) -> str:
             child(user_pos).child('contacts').child(contact_pos).get()
         )
     )
+
+    # TODO: GET request from Reminders app
 
     # display contact details
     for key, val in contact.items():
@@ -181,7 +183,6 @@ def create_contact(user_pos: str) -> None:
         "work phone": input("Work phone: ").strip(),
         "work address": input("Work address: ").strip(),
         "memo": input("Memo: ").strip(),
-        # TODO: GET request from Reminders app
         "reminder_1": "",  # from reminders app
         "reminder_2": "",  # from reminders app
         "reminder_3": "",  # from reminders app
@@ -208,20 +209,27 @@ def create_contact(user_pos: str) -> None:
     return
 
 
-def delete_contact(user_id: int, contact_id: int) -> None:
+def delete_contact(user_pos: str, contact_pos: str) -> None:
     """
     delete a select contact
-    :param user_id: from account login
-    :param contact_id: from view_all()
+    :param user_pos: from view_all()
+    :param contact_pos: from val_contact_id()
     :return: None
     """
+    contact: dict = json.loads(
+        json.dumps(
+            db.reference('contacts_mgmt').child('contacts_db').
+            child(user_pos).child('contacts').child(contact_pos).get()
+        )
+    )
+
     # prevent user from deleting self profile
-    if contact_id == 0:
+    if contact['contact_id'] == 0:
         print("You cannot delete your self profile.\n")
         return
 
     # show select contact profile
-    contacts_db, contact, pos_u, pos_c = read_contact(user_id, contact_id)
+    read_contact(user_pos, contact_pos)
 
     # confirm user action
     is_accept = input("Enter 1 to delete or 2 to cancel: ")
@@ -229,12 +237,8 @@ def delete_contact(user_id: int, contact_id: int) -> None:
         return
 
     # delete from `contacts_db`
-    contacts_db[pos_u]["contacts"].pop(pos_c)
-
-    # apply change(s) to `contacts_db.json`
-    with open(contacts_fp, "w") as w_contacts:
-        json.dump(contacts_db, w_contacts, indent=4)
-    print(f"contact_id: {contact_id} removed successfully.\n")
+    db.reference('contacts_mgmt').child('contacts_db').\
+        child(user_pos).child('contacts').child(contact_pos).delete()
 
     return
 
@@ -268,7 +272,6 @@ def create_self(user_id: int) -> None:
         "work phone": input("Work phone: ").strip(),
         "work address": input("Work address: ").strip(),
         "memo": input("Memo: ").strip(),
-        # TODO: GET request from Reminders app
         "reminder_1": "",  # from reminders app
         "reminder_2": "",  # from reminders app
         "reminder_3": "",  # from reminders app
@@ -381,7 +384,7 @@ def val_contact_id(user_pos: str) -> str:
     # user input validation for `contact_id`
     while True:
         try:
-            contact_id = input("Enter contact_id for details: ")
+            contact_id = input("Enter contact_id: ")
             contact_id = int(contact_id)
         except ValueError as val:
             print(f"{val}. Please enter an integer.")
