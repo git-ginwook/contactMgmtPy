@@ -1,13 +1,12 @@
 import firebase_admin
 from firebase_admin import credentials
-import loginPg
-import contactsPg
+import login
+import contacts
 
 
 def main() -> None:
     """
     start page with login options for user to select from
-
     :return: None
     """
     # start Contact Management App
@@ -38,24 +37,24 @@ def main() -> None:
             if option == 0:
                 break
             if option == 1:
-                is_login, user = loginPg.access_login()
+                is_login, user = login.access_login()
 
                 # access contacts for `user_id`
                 if is_login:
-                    if contactsPg.view_all(user["user_id"]):
-                        contactsPg.view_all(user["user_id"])
+                    if contacts.view_all(user["user_id"]):
+                        contacts.view_all(user["user_id"])
 
             elif option == 2:
-                loginPg.create_login()
+                login.create_login()
             elif option == 3:
-                is_login, user = loginPg.access_login()
+                is_login, user = login.access_login()
                 if is_login:
-                    loginPg.change_login(user)
+                    login.change_login(user)
             elif option == 4:
-                is_login, user = loginPg.access_login()
+                is_login, user = login.access_login()
                 if is_login:
-                    if loginPg.delete_login(user):
-                        contactsPg.delete_all(user["user_id"])
+                    if login.delete_login(user):
+                        contacts.delete_all(user["user_id"])
             elif option == 5:
                 print("Please send your questions or comments to: "
                       "leeginw@oregonstate.edu\n")

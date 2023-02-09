@@ -1,13 +1,11 @@
 from firebase_admin import db
 import json
-# login admin key
 LOGIN_ADMIN = "-NNlN7pcoRbhldry0ZYs"
 
 
 def access_login() -> bool and dict:
     """
     login with username and password
-
     :return: True/False, user profile
     """
     attempt: int = 1
@@ -52,14 +50,12 @@ def access_login() -> bool and dict:
 def create_login() -> None:
     """
     create a user profile with username and password
-
     RULES:
     - username must be unique and less than 24 characters.
     - password must be between 8-12 characters.
     - password must have at least one special character: !@#$%^&*()-_+="
     - password must have at least one number.
     - password must have at least one uppercase.
-
     :return: None
     """
     print("Create username and password.")
@@ -132,16 +128,13 @@ def create_login() -> None:
 def change_login(user: dict) -> None:
     """
     update user profile to change username and/or password
-
     RULES:
     - username must be less than 24 characters.
     - password must be between 8-12 characters.
     - password must have at least one special character: !@#$%^&*()-_+="
     - password must have at least one number.
     - password must have at least one uppercase.
-
-    :param:
-    - profile: user profile (logged in)
+    :param: user: user profile (logged in)
     :return: None
     """
     # not allowed to change admin
@@ -212,8 +205,7 @@ def change_login(user: dict) -> None:
 def delete_login(user: dict) -> bool:
     """
     delete the current user profile
-
-    :param: user profile (logged in)
+    :param: user: user profile (logged in)
     :return: True/False
     """
     # not allowed to delete admin
@@ -263,8 +255,7 @@ def delete_login(user: dict) -> bool:
 def val_username(username: str) -> bool:
     """
     validate whether username is unique and less than 24 characters.
-
-    :param: username from user input
+    :param: username: from user input
     :return: True or False
     """
     # convert collections object to dict
@@ -295,8 +286,7 @@ def val_password(password: str) -> bool:
     - password must have at least one special character: !@#$%^&*()-_+="
     - password must have at least one number.
     - password must have at least one uppercase.
-
-    :param: password from user input
+    :param: password: from user input
     :return: True or False
     """
     specials = "!@#$%^&*()-_+="

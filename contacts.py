@@ -1,15 +1,12 @@
 from firebase_admin import db
 import json
 
-contacts_fp: str = './contacts_db.json'
-CONTACTS_ADMIN = '-NNlh7tcSVNFgf1HRqa1'
-
 
 def view_all(user_id: int) -> bool:
     """
     view all contacts for `user_id`
     if logging in for the first time, user should complete self profile
-    :param: user_id: from account login
+    :param user_id: from account login
     :return: True/False
     """
     while True:
@@ -420,4 +417,4 @@ def val_req_attr(req_attr: str) -> str:
 
 
 if __name__ == '__main__':
-    print("contact list module")
+    print("contacts module")
