@@ -15,34 +15,33 @@ firebase_admin.initialize_app(cred, {
 })
 
 
-def handshake_ms(r_user_id: int) -> bool:
+def handshake_ms(r_user_id: int, username: str, password: str) -> bool:
     """
     take in a user id from Reminders app to sync with a user id in Contacts app
     need to log in to Contacts app with correct username and password
     if either `r_user_id` or `c_user_id` exists in `handshake_db`,
     function returns False.
     Otherwise, returns True.
-    :param: r_user_id: provided by Reminders app
+    :param r_user_id: provided by Reminders app
+    :param username: provided by Reminders app
+    :param password: provided by Reminders app
     :return: True/False
     """
-    # confirm `r_user_id` is not synced yet
-    handshake_fb = json.loads(
+    # get `handshake_db`
+    handshake_fb: dict = json.loads(
         json.dumps(
             db.reference('handshake_db').get()
         )
     )
 
+    # confirm `r_user_id` is not synced yet
     for key in handshake_fb.keys():
         if handshake_fb[key]['r_user_id'] == r_user_id:
-            print(f"Return FALSE: "
+            print("Return FALSE: "
                   f"user id [{r_user_id}] for Reminders app is "
                   f"already synced with user id [{handshake_fb[key]['c_user_id']}] "
                   f"of Contacts app.\n")
             return False
-
-    # login to Contacts app
-    username: str = input("Enter username: ")
-    password: str = input("Enter password: ")
 
     # get the latest login profiles
     login_fb = json.loads(
@@ -61,23 +60,23 @@ def handshake_ms(r_user_id: int) -> bool:
     # no user profile found in Contacts app
     if c_user_id is None:
         print(f"username [{username}] and password [{password}] "
-              f"didn't match with a user profile in Contacts app.\n")
+              "didn't match with a user profile in Contacts app.\n")
         return False
 
     # confirm `c_user_id` is not synced yet
     for key in handshake_fb.keys():
         if handshake_fb[key]['c_user_id'] == c_user_id:
-            print(f"Return FALSE: "
+            print("Return FALSE: "
                   f"user id [{c_user_id}] for Contacts app is "
                   f"already synced with user id [{handshake_fb[key]['r_user_id']}] "
-                  f"of Reminders app.\n")
+                  "of Reminders app.\n")
             return False
 
     # update `handshake_db`
     db.reference('handshake_db').push({
         'c_user_id': c_user_id, 'r_user_id': r_user_id
     })
-    print(f"Return TRUE: "
+    print("Return TRUE: "
           f"Reminders app user id [{r_user_id}] "
           f"synced with Contacts app user id [{c_user_id}].\n")
     return True
@@ -86,6 +85,10 @@ def handshake_ms(r_user_id: int) -> bool:
 if __name__ == '__main__':
     while True:
         print("handshake microservice is running...\n")
-        # TODO: feed `user_id` from Reminders app
+        # TODO: feed `user_id`, `username`, and `password` from zmq
         user_id: int = int(input("Enter user id of Reminders app: "))
-        is_synced: bool = handshake_ms(user_id)
+        # login to Contacts app
+        print("Please enter username and password to login to Contacts app. ")
+        c_username: str = input("Username: ")
+        c_password: str = input("Password: ")
+        is_synced: bool = handshake_ms(user_id, c_username, c_password)
