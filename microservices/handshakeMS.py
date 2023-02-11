@@ -83,12 +83,4 @@ def handshake_ms(r_user_id: int, username: str, password: str) -> bool:
 
 
 if __name__ == '__main__':
-    while True:
-        print("handshake microservice is running...\n")
-        # TODO: feed `user_id`, `username`, and `password` from zmq
-        user_id: int = int(input("Enter user id of Reminders app: "))
-        # login to Contacts app
-        print("Please enter username and password to login to Contacts app. ")
-        c_username: str = input("Username: ")
-        c_password: str = input("Password: ")
-        is_synced: bool = handshake_ms(user_id, c_username, c_password)
+    print("handshake microservice module")
