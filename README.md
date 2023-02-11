@@ -43,3 +43,7 @@ User must first verify the correct username and password before the deletion. \
 
 ### [5] contact developer for any questions or feedback
 User can reach out to the developer via email for any questions or feedback.
+
+## Sequence diagram for two microservices
+! (sequence_diagram.png)
+
