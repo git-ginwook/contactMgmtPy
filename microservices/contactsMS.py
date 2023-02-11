@@ -81,7 +81,7 @@ def contacts_ms(r_user_id: int) -> dict or bool:
             'f_name': val['f_name'],
             'l_name': val['l_name']
         })
-
+    print(f"Return `contacts_dict`: {contacts_dict}\n")
     return contacts_dict
 
 

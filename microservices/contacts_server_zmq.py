@@ -33,5 +33,5 @@ def contacts_server():
 
 if __name__ == '__main__':
     # TODO: need to have the zmq server running on a separate terminal
-    print("zmq server for handshake microservice")
+    print("zmq server for contacts microservice")
     contacts_server()
