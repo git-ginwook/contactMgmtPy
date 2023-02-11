@@ -37,7 +37,6 @@ def handshake_client(r_user_id: int, c_username: str, c_password: str) -> bool:
         result = False
 
     # end the handshake client by returning `result`
-    print(f"handshake result: [{result}]")
     return result
 
 

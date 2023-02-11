@@ -62,7 +62,7 @@ def contacts_ms(r_user_id: int) -> dict or bool:
     if c_key is None:
         print("Return False: "
               f"c_user_id [{c_user_id}] associated with r_user_id [{r_user_id}] "
-              f"no longer exists in Contacts app.\n")
+              f"has no contacts info in its Contacts app.\n")
         return False
 
     # get `contact`
@@ -86,8 +86,10 @@ def contacts_ms(r_user_id: int) -> dict or bool:
 
 
 if __name__ == '__main__':
+    print("contacts microservice module")
     while True:
         print("contacts microservice is running...\n")
         # TODO: feed `user_id` from zmq
         user_id: int = int(input("Enter user id of Reminders app: "))
-        res_contacts: dict = contacts_ms(user_id)
+        res_contacts: dict or bool = contacts_ms(user_id)
+        print(res_contacts)
