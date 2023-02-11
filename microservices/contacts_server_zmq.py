@@ -4,7 +4,7 @@ import contactsMS
 
 def contacts_server():
     while True:
-        # set zmq server socket to localhost:8888
+        # set zmq server socket to localhost:5554
         context = zmq.Context()
         socket = context.socket(zmq.REP)
         socket.bind("tcp://*:5554")

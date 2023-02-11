@@ -4,7 +4,7 @@ import time
 
 
 def contacts_client(r_user_id: int) -> dict or bool:
-    # set zmq client socket to localhost:8888
+    # set zmq client socket to localhost:5554
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
     socket.connect("tcp://localhost:5554")
