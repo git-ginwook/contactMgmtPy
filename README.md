@@ -85,5 +85,33 @@ User can select a contact to update one or more of its attributes by providing a
 ### [4] delete a contact
 User can select a contact to delete it from the contacts list by providing a valid `contact_id`.
 
-## Sequence diagram for two microservices
+## Communication Contract for two microservices
+### 1. handshake microservice
+- **feature**: sync login features between Contacts App and Reminders App. 
+- **how to REQUEST data**: 
+    1. import handshake microservice module \
+    (e.g., `import handshake_client_zmq`)
+    2. prepare three parameters - user id for Reminders App and login username and password for Contacts App \
+    (e.g., `r_user_id: int`, `c_username: str`, `c_password: str`)
+    3. call handshake microservice method with the three parameters \
+    (e.g., `handshake_client_zmq.handshake_client(r_user_id, c_username, c_password)`)
+- **how to RECEIVE data**: 
+    1. result will be returned to the handshake microservice method as a boolean data type \
+    (e.g., `True`: when successful, `False`: when failed)
+
+### 2. contacts microservice
+- *pre-requisite*: user of Reminders App already synced their account with a Contacts App account through the handshake microservice.
+- **feature**: import contacts list from Contacts App.
+- **how to REQUEST data**:
+    1. import contacts microservice module \
+    (e.g., `import contacts_client_zmq`)
+    2. prepare a parameter - user id for Reminders App \
+    (e.g., `r_user_id: int`)
+    3. call contacts microservice method with the parameter \
+    (e.g., `contacts_client_zmq.contacts_client(r_user_id)`)
+- **how to RECEIVE data**:
+    1. result will be returned to the contacts microservice method either as a dictionary or boolean data type \
+    (e.g., `False`: when failed, `{'contacts': [{'contact_id': 0, 'f_name': 'James', 'l_name': Toby}...]}`)
+
+### Sequence diagram for two microservices
 ![Sequence Diagrams](sequence_diagram.png)
