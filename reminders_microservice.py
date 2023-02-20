@@ -8,7 +8,7 @@ import argon2
 app = Flask(__name__)
 
 # Initialize Firebase database
-cred = credentials.Certificate('.backendw2023-firebase-adminsdk-vjhgp-0f8c1203ba.json')
+cred = credentials.Certificate('backendw2023-firebase-adminsdk-vjhgp-ff5025e179.json')     # TODO: need to update credential
 firebaseapp = firebase_admin.initialize_app(cred)
 db = firestore.client()
 
