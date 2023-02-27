@@ -53,7 +53,8 @@ User can choose one of the following actions to manage their contacts [0-4]: \
 [1] create a contact \
 [2] view a contact detail \
 [3] update a contact \
-[4] delete a contact
+[4] delete a contact \
+[5] sync account with Reminders App \
 
 ### [0] log out
 log out of the user account and get redirected to the login options page.
@@ -79,11 +80,18 @@ The following attributes can be filled in to create a contact:
 ### [2] view a contact detail
 User can select a contact to read the details by providing a valid `contact_id` from the contacts list.
 
+If accounts synchroized between Contacts App and Remidners App (via `contacts option [5]`), \
+additional attributes, `Reminders_[#]` will be displayed as attribute(s) if a selected contact has reminder task(s) stored in Reminders App.
+
 ### [3] update a contact
 User can select a contact to update one or more of its attributes by providing a valid `contact_id` from the contacts list.
 
 ### [4] delete a contact
 User can select a contact to delete it from the contacts list by providing a valid `contact_id`.
+
+### [5] sync account with Reminders App
+User can sync reminders from Reminders App to display individual reminder tasks in a contact detail through `contacts option [2]`. \
+User only needs to sync **once**.
 
 ## Communication Contract for two microservices
 ### 1. handshake microservice
