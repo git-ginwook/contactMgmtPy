@@ -1,5 +1,6 @@
 from firebase_admin import db
 import json
+import reminders_middleware
 
 
 def view_all(user_id: int) -> bool:
@@ -50,22 +51,30 @@ def view_all(user_id: int) -> bool:
             create_contact(user_pos)
             continue
         elif action == 2:
-            read_contact(user_pos, val_contact_id(user_pos))
+            # GET request from Reminders app on `user_id`
+            reminders: list = reminders_middleware.getreminders(user_id)
+
+            contact_pos, contact_id = val_contact_id(user_pos)
+            read_contact(user_pos, contact_pos, contact_id, reminders)
             continue
         elif action == 3:
-            update_contact(user_pos, val_contact_id(user_pos))
+            contact_pos, contact_id = val_contact_id(user_pos)
+            update_contact(user_pos, contact_pos)
             continue
         elif action == 4:
-            delete_contact(user_pos, val_contact_id(user_pos))
+            contact_pos, contact_id = val_contact_id(user_pos)
+            delete_contact(user_pos, contact_pos)
             continue
         return True
 
 
-def read_contact(user_pos: str, contact_pos: str) -> str:
+def read_contact(user_pos: str, contact_pos: str, contact_id: int, reminders: list) -> str:
     """
     read and display a select contact
     :param user_pos: from view_all()
     :param contact_pos: from val_contact_id()
+    :param contact_id: from val_contact_id()
+    :param reminders: Reminders list called from Reminders App
     :return: contact position
     """
     # get contact details
@@ -76,11 +85,16 @@ def read_contact(user_pos: str, contact_pos: str) -> str:
         )
     )
 
-    # TODO: GET request from Reminders app
-
     # display contact details
     for key, val in contact.items():
         print(f"    {key}: {val}")
+
+    i: int = 1
+    for task in reminders:
+        # TODO: re-confirm new attribute names
+        if task['contact_id'] == str(contact_id):
+            print(f"    reminder_{i}: {task['name']} by {task['date']} {task['time']}")
+            i += 1
     print("\n")
 
     return contact_pos
@@ -179,12 +193,7 @@ def create_contact(user_pos: str) -> None:
         "title": input("Title: ").strip(),
         "work phone": input("Work phone: ").strip(),
         "work address": input("Work address: ").strip(),
-        "memo": input("Memo: ").strip(),
-        "reminder_1": "",  # from reminders app
-        "reminder_2": "",  # from reminders app
-        "reminder_3": "",  # from reminders app
-        "reminder_4": "",  # from reminders app
-        "reminder_5": ""  # from reminders app
+        "memo": input("Memo: ").strip()
     }
 
     # confirm user action
@@ -268,12 +277,7 @@ def create_self(user_id: int) -> None:
         "title": input("Title: ").strip(),
         "work phone": input("Work phone: ").strip(),
         "work address": input("Work address: ").strip(),
-        "memo": input("Memo: ").strip(),
-        "reminder_1": "",  # from reminders app
-        "reminder_2": "",  # from reminders app
-        "reminder_3": "",  # from reminders app
-        "reminder_4": "",  # from reminders app
-        "reminder_5": ""  # from reminders app
+        "memo": input("Memo: ").strip()
     }
 
     # confirm user action
@@ -357,13 +361,13 @@ def choose_action() -> int:
                 continue
 
 
-def val_contact_id(user_pos: str) -> str:
+def val_contact_id(user_pos: str) -> str and int:
     """
     validate contact id
     - check if user input is an integer
     - check if contact id exists in the database
     :param user_pos: from account login
-    :return: validated contact_id
+    :return: validated contact_id and its Firebase key
     """
     # get user's contacts
     contacts: dict = json.loads(
@@ -385,7 +389,7 @@ def val_contact_id(user_pos: str) -> str:
         else:
             for key, val in contacts.items():
                 if val['contact_id'] == contact_id:
-                    return key
+                    return key, contact_id
 
             print(f"Contact id [{contact_id}] doesn't exist. "
                   "Please enter a valid contact id.")
