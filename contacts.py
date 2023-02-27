@@ -65,6 +65,9 @@ def view_all(user_id: int) -> bool:
             contact_pos, contact_id = val_contact_id(user_pos)
             delete_contact(user_pos, contact_pos)
             continue
+        elif action == 5:
+            sync_accounts(user_id)
+
         return True
 
 
@@ -331,6 +334,27 @@ def delete_all(user_id: int) -> None:
     return
 
 
+def sync_accounts(user_id: int) -> None:
+    """
+    invoke handshake microservice to sync two accounts
+    between Contacts App and Reminders App
+    :param user_id: from view_all()
+    :return: None
+    """
+    print("To sync the Contacts App account with your Reminders App account, "
+          "you have to login to the Reminders App using email and password.\n"
+          "You only need to synchronize once.\n")
+    email: str = input("Enter email: ")
+    password: str = input("Enter password: ")
+
+    if reminders_middleware.handshake(email, password, user_id) != "Server Error":
+        print("Successful handshake! Now you can access your reminders from Contacts App!\n")
+    else:
+        print("Unsuccessful handshake... Please try again.\n")
+
+    return
+
+
 def choose_action() -> int:
     """
     user chooses contact action
@@ -340,21 +364,22 @@ def choose_action() -> int:
     while True:
         try:
             action = input(
-                "What would you like to do with your contacts? [0 ~ 4]\n"
+                "What would you like to do with your contacts? [0 ~ 5]\n"
                 "    [0] log out\n"
                 "    [1] create a contact\n"
                 "    [2] view a contact detail\n"
                 "    [3] update a contact\n"
                 "    [4] delete a contact\n"
+                "    [5] sync account with Reminders App\n"
             )
             action = int(action)
         except ValueError as val:
-            print(f"{val}. Please enter an integer [0 ~ 4].")
+            print(f"{val}. Please enter an integer [0 ~ 5].")
             continue
         except EOFError:
             raise EOFError("[Exit Contact Management App]")
         else:
-            if 0 <= action <= 4:
+            if 0 <= action <= 5:
                 print(f"Your contact action: [{action}]")
                 return action
             else:
