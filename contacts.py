@@ -1,5 +1,6 @@
 from firebase_admin import db
 import json
+import csv
 import reminders_middleware
 
 
@@ -57,7 +58,6 @@ def view_all(user_id: int) -> bool:
             contact_pos, contact_id = val_contact_id(user_pos)
             # GET request from Reminders app on `user_id`
             reminders: list = reminders_middleware.getreminders(user_id)
-
             # check if synced
             if type(reminders) is str:
                 read_contact(user_pos, contact_pos, contact_id, None)
@@ -110,6 +110,7 @@ def read_contact(user_pos: str, contact_pos: str, contact_id: int, reminders: li
         print("\n")
         return
 
+    #  continue if synced
     i: int = 1
     for task in reminders:
         # TODO: re-confirm new attribute names
@@ -379,11 +380,37 @@ def sync_accounts(user_id: int) -> None:
 
 def download_all(contacts: dict) -> None:
     """
+    write a csv file containing all contacts data of a user
 
-    :param contacts:
-    :return:
+    if a csv file with the same filename already exists,
+    data will be overwritten.
+
+    :param contacts: from view_all()
+    :return: None
     """
-    print(contacts['user_id'])
+    # reformat contacts data into dict within list
+    contacts_dict = []
+    for contact in contacts.values():
+        contacts_dict.append(contact)
+
+    # list column names
+    field_names = ['contact_id',
+                   'f_name', 'l_name', 'm_name',
+                   'phone', 'email', 'address', 'homepage',
+                   'company', 'department', 'title',
+                   'work phone', 'work address',
+                   'memo']
+
+    # user input for filename
+    filename = input("Enter filename: ")
+
+    # write/overwrite contacts data to a csv file
+    with open(f'{filename}.csv', "w") as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=field_names)
+        writer.writeheader()
+        writer.writerows(contacts_dict)
+
+    return
 
 
 def choose_action() -> int:
@@ -411,7 +438,7 @@ def choose_action() -> int:
         except EOFError:
             raise EOFError("[Exit Contact Management App]")
         else:
-            if 0 <= action <= 5:
+            if 0 <= action <= 6:
                 print(f"Your contact action: [{action}]")
                 return action
             else:
