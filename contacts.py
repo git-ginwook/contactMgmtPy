@@ -401,7 +401,7 @@ def download_all(contacts: dict) -> None:
 
     # list column names
     field_names = ['contact_id',
-                   'f_name', 'l_name', 'm_name',
+                   'f_name', 'm_name', 'l_name',
                    'phone', 'email', 'address', 'homepage',
                    'company', 'department', 'title',
                    'work phone', 'work address',
