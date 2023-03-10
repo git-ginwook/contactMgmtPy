@@ -8,7 +8,7 @@ def view_all(user_id: int) -> bool:
     """
     view all contacts for `user_id`
     if logging in for the first time, user should complete self profile
-    :param user_id: from account login
+    :param: user_id: from account login
     :return: True/False
     """
     while True:
@@ -93,10 +93,10 @@ def view_all(user_id: int) -> bool:
 def read_contact(user_pos: str, contact_pos: str, contact_id: int, reminders: list or None) -> None:
     """
     read and display a select contact
-    :param user_pos: from view_all()
-    :param contact_pos: from val_contact_id()
-    :param contact_id: from val_contact_id()
-    :param reminders: Reminders list called from Reminders App
+    :param: user_pos: from view_all()
+    :param: contact_pos: from val_contact_id()
+    :param: contact_id: from val_contact_id()
+    :param: reminders: Reminders list called from Reminders App
     :return: contact position
     """
     # get contact details
@@ -131,9 +131,9 @@ def read_contact(user_pos: str, contact_pos: str, contact_id: int, reminders: li
 def update_contact(user_pos: str, contact_pos: str, contact_id: int) -> None:
     """
     update values of select attribute(s) for a select contact
-    :param user_pos: from view_all()
-    :param contact_pos: from val_contact_id()
-    :param contact_id: from val_contact_id()
+    :param: user_pos: from view_all()
+    :param: contact_pos: from val_contact_id()
+    :param: contact_id: from val_contact_id()
     :return: None
     """
     # display select contact details
@@ -197,7 +197,7 @@ def update_contact(user_pos: str, contact_pos: str, contact_id: int) -> None:
 def create_contact(user_pos: str) -> None:
     """
     create a new contact profile
-    :param user_pos: from account login
+    :param: user_pos: from account login
     :return: None
     """
     contacts_attr: dict = json.loads(
@@ -247,9 +247,9 @@ def create_contact(user_pos: str) -> None:
 def delete_contact(user_pos: str, contact_pos: str, contact_id: int) -> None:
     """
     delete a select contact
-    :param user_pos: from view_all()
-    :param contact_pos: from val_contact_id()
-    :param contact_id: from val_contact_id()
+    :param: user_pos: from view_all()
+    :param: contact_pos: from val_contact_id()
+    :param: contact_id: from val_contact_id()
     :return: None
     """
     contact: dict = json.loads(
@@ -282,7 +282,7 @@ def delete_contact(user_pos: str, contact_pos: str, contact_id: int) -> None:
 def create_self(user_id: int) -> None:
     """
     user creates a self profile when logging in for the first time
-    :param user_id: from account login
+    :param: user_id: from account login
     :return: None
     """
     user_pos: None or str = None
@@ -342,7 +342,7 @@ def create_self(user_id: int) -> None:
 def delete_all(user_id: int) -> None:
     """
     delete all contacts associated with `user_id`
-    :param user_id: from account login
+    :param: user_id: from account login
     :return: None
     """
     # locate `user_id`
@@ -365,7 +365,7 @@ def sync_accounts(user_id: int) -> None:
     """
     invoke handshake microservice to sync two accounts
     between Contacts App and Reminders App
-    :param user_id: from view_all()
+    :param: user_id: from view_all()
     :return: None
     """
     print("To sync the Contacts App account with your Reminders App account, "
@@ -391,7 +391,7 @@ def download_all(contacts: dict) -> None:
     if a csv file with the same filename already exists,
     data will be overwritten.
 
-    :param contacts: from view_all()
+    :param: contacts: from view_all()
     :return: None
     """
     # reformat contacts data into dict within list
@@ -425,7 +425,7 @@ def search(contacts: dict) -> None:
     - search for substring
     - search ignores case sensitivity
 
-    :param contacts: from view_all()
+    :param: contacts: from view_all()
     :return: None
     """
     # display attribute names
@@ -491,7 +491,7 @@ def val_contact_id(user_pos: str) -> str and int:
     validate contact id
     - check if user input is an integer
     - check if contact id exists in the database
-    :param user_pos: from account login
+    :param: user_pos: from account login
     :return: validated contact_id and its Firebase key
     """
     # get user's contacts
@@ -523,7 +523,7 @@ def val_contact_id(user_pos: str) -> str and int:
 def val_req_attr(req_attr: str) -> str:
     """
     validate whether a required attribute is empty
-    :param req_attr: contact attribute name
+    :param: req_attr: contact attribute name
     :return: valid user input
     """
     user_input: str = ""
