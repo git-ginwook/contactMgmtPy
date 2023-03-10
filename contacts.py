@@ -67,12 +67,12 @@ def view_all(user_id: int) -> bool:
         # [3] update a contact
         elif action == 3:
             contact_pos, contact_id = val_contact_id(user_pos)
-            update_contact(user_pos, contact_pos)
+            update_contact(user_pos, contact_pos, contact_id)
             continue
         # [4] delete a contact
         elif action == 4:
             contact_pos, contact_id = val_contact_id(user_pos)
-            delete_contact(user_pos, contact_pos)
+            delete_contact(user_pos, contact_pos, contact_id)
             continue
         # [5] sync account with Reminders App
         elif action == 5:
@@ -121,15 +121,16 @@ def read_contact(user_pos: str, contact_pos: str, contact_id: int, reminders: li
     return
 
 
-def update_contact(user_pos: str, contact_pos: str) -> None:
+def update_contact(user_pos: str, contact_pos: str, contact_id: int) -> None:
     """
     update values of select attribute(s) for a select contact
     :param user_pos: from view_all()
     :param contact_pos: from val_contact_id()
+    :param contact_id: from val_contact_id()
     :return: None
     """
     # display select contact details
-    read_contact(user_pos, contact_pos)
+    read_contact(user_pos, contact_pos, contact_id, None)
 
     # get contact details
     contact: dict = json.loads(
@@ -236,11 +237,12 @@ def create_contact(user_pos: str) -> None:
     return
 
 
-def delete_contact(user_pos: str, contact_pos: str) -> None:
+def delete_contact(user_pos: str, contact_pos: str, contact_id: int) -> None:
     """
     delete a select contact
     :param user_pos: from view_all()
     :param contact_pos: from val_contact_id()
+    :param contact_id: from val_contact_id()
     :return: None
     """
     contact: dict = json.loads(
@@ -256,7 +258,7 @@ def delete_contact(user_pos: str, contact_pos: str) -> None:
         return
 
     # show select contact profile
-    read_contact(user_pos, contact_pos)
+    read_contact(user_pos, contact_pos, contact_id, None)
 
     # confirm user action
     is_accept = input("Enter 1 to delete or 2 to cancel: ")
@@ -381,7 +383,7 @@ def download_all(contacts: dict) -> None:
     :param contacts:
     :return:
     """
-    print(contacts)
+    print(contacts['user_id'])
 
 
 def choose_action() -> int:
