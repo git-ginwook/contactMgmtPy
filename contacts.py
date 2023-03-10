@@ -35,7 +35,8 @@ def view_all(user_id: int) -> bool:
         print("[ALL CONTACTS]")
         contacts: dict = json.loads(
             json.dumps(
-                db.reference('contacts_mgmt').child('contacts_db').child(user_pos).child('contacts').get()
+                db.reference('contacts_mgmt').child('contacts_db').
+                child(user_pos).child('contacts').get()
             )
         )
         for contact in contacts.values():
@@ -116,10 +117,9 @@ def read_contact(user_pos: str, contact_pos: str, contact_id: int, reminders: li
         print("\n")
         return
 
-    #  continue if synced
+    #  import reminders if synced
     i: int = 1
     for task in reminders:
-        # TODO: re-confirm new attribute names
         if task['contact_id'] == str(contact_id):
             print(f"    reminder_{i}: {task['name']} by {task['date']} {task['time']}")
             i += 1
@@ -231,10 +231,12 @@ def create_contact(user_pos: str) -> None:
         return
 
     # # append `contact_profile`
-    db.reference('contacts_mgmt').child('contacts_db').child(user_pos).child('contacts').push(contact_profile)
+    db.reference('contacts_mgmt').child('contacts_db').child(user_pos).\
+        child('contacts').push(contact_profile)
 
     # # increment `last_contact_id`
-    db.reference('contacts_mgmt').child('contacts_db').child(user_pos).update({'last_contact_id': new_contact_id})
+    db.reference('contacts_mgmt').child('contacts_db').child(user_pos).\
+        update({'last_contact_id': new_contact_id})
 
     # ask for the subsequent action
     go_stop: str = input("Enter 1 to create another or 2 to stop: ")
@@ -334,7 +336,8 @@ def create_self(user_id: int) -> None:
             break
 
     # update self profile to the new contacts profile
-    db.reference('contacts_mgmt').child('contacts_db').child(user_pos).child('contacts').push(self_profile)
+    db.reference('contacts_mgmt').child('contacts_db').child(user_pos).\
+        child('contacts').push(self_profile)
     print("Thanks for completing your profile.\n")
     return
 
@@ -497,7 +500,8 @@ def val_contact_id(user_pos: str) -> str and int:
     # get user's contacts
     contacts: dict = json.loads(
         json.dumps(
-            db.reference('contacts_mgmt').child('contacts_db').child(user_pos).child('contacts').get()
+            db.reference('contacts_mgmt').child('contacts_db').child(user_pos).
+            child('contacts').get()
         )
     )
 
