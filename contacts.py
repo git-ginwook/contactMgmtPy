@@ -45,33 +45,46 @@ def view_all(user_id: int) -> bool:
         # choose action
         action: int = choose_action()
 
+        # [0] log out
         if action == 0:
             return False
+        # [1] create a contact
         elif action == 1:
             create_contact(user_pos)
             continue
+        # [2] view a contact detail
         elif action == 2:
+            contact_pos, contact_id = val_contact_id(user_pos)
             # GET request from Reminders app on `user_id`
             reminders: list = reminders_middleware.getreminders(user_id)
 
-            contact_pos, contact_id = val_contact_id(user_pos)
-            read_contact(user_pos, contact_pos, contact_id, reminders)
+            # check if synced
+            if type(reminders) is str:
+                read_contact(user_pos, contact_pos, contact_id, None)
+            else:
+                read_contact(user_pos, contact_pos, contact_id, reminders)
             continue
+        # [3] update a contact
         elif action == 3:
             contact_pos, contact_id = val_contact_id(user_pos)
             update_contact(user_pos, contact_pos)
             continue
+        # [4] delete a contact
         elif action == 4:
             contact_pos, contact_id = val_contact_id(user_pos)
             delete_contact(user_pos, contact_pos)
             continue
+        # [5] sync account with Reminders App
         elif action == 5:
             sync_accounts(user_id)
+        # [6] download all contacts
+        elif action == 6:
+            download_all(contacts)
 
         return True
 
 
-def read_contact(user_pos: str, contact_pos: str, contact_id: int, reminders: list) -> str:
+def read_contact(user_pos: str, contact_pos: str, contact_id: int, reminders: list or None) -> None:
     """
     read and display a select contact
     :param user_pos: from view_all()
@@ -92,6 +105,11 @@ def read_contact(user_pos: str, contact_pos: str, contact_id: int, reminders: li
     for key, val in contact.items():
         print(f"    {key}: {val}")
 
+    # return if not synced
+    if reminders is None:
+        print("\n")
+        return
+
     i: int = 1
     for task in reminders:
         # TODO: re-confirm new attribute names
@@ -100,7 +118,7 @@ def read_contact(user_pos: str, contact_pos: str, contact_id: int, reminders: li
             i += 1
     print("\n")
 
-    return contact_pos
+    return
 
 
 def update_contact(user_pos: str, contact_pos: str) -> None:
@@ -344,15 +362,26 @@ def sync_accounts(user_id: int) -> None:
     print("To sync the Contacts App account with your Reminders App account, "
           "you have to login to the Reminders App using email and password.\n"
           "You only need to synchronize once.\n")
+    # get user inputs to access Reminders App
     email: str = input("Enter email: ")
     password: str = input("Enter password: ")
 
+    # call handshake microservice to connect to Reminders App
     if reminders_middleware.handshake(email, password, user_id) != "Server Error":
         print("Successful handshake! Now you can access your reminders from Contacts App!\n")
     else:
         print("Unsuccessful handshake... Please try again.\n")
 
     return
+
+
+def download_all(contacts: dict) -> None:
+    """
+
+    :param contacts:
+    :return:
+    """
+    print(contacts)
 
 
 def choose_action() -> int:
@@ -371,6 +400,7 @@ def choose_action() -> int:
                 "    [3] update a contact\n"
                 "    [4] delete a contact\n"
                 "    [5] sync account with Reminders App\n"
+                "    [6] download all contacts\n"
             )
             action = int(action)
         except ValueError as val:
