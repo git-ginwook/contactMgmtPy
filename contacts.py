@@ -77,9 +77,15 @@ def view_all(user_id: int) -> bool:
         # [5] sync account with Reminders App
         elif action == 5:
             sync_accounts(user_id)
+            continue
         # [6] download all contacts
         elif action == 6:
             download_all(contacts)
+            continue
+        # [7] search
+        elif action == 7:
+            search(contacts)
+            continue
 
         return True
 
@@ -413,6 +419,40 @@ def download_all(contacts: dict) -> None:
     return
 
 
+def search(contacts: dict) -> None:
+    """
+    search for matching `attribute` and `value`
+    - search for substring
+    - search ignores case sensitivity
+
+    :param contacts: from view_all()
+    :return: None
+    """
+    # display attribute names
+    print("[List of attribute names]")
+    for name in list(list(contacts.values())[0].keys()):
+        print(f'    {name}')
+    print('\n')
+
+    # user search input
+    attribute = input("Enter attribute name: ")
+    value = input("Enter search value: ")
+
+    for contact in contacts.values():
+        # convert value to integer type for `contact_id`
+        if attribute == 'contact_id':
+            if contact['contact_id'] == int(value):
+                print(contact)
+
+        # search for contact that contains `value` (ignoring case)
+        elif value.lower() in contact[f'{attribute}'].lower():
+            print(contact)
+
+    print('\n')
+
+    return
+
+
 def choose_action() -> int:
     """
     user chooses contact action
@@ -422,7 +462,7 @@ def choose_action() -> int:
     while True:
         try:
             action = input(
-                "What would you like to do with your contacts? [0 ~ 5]\n"
+                "What would you like to do with your contacts? [0 ~ 7]\n"
                 "    [0] log out\n"
                 "    [1] create a contact\n"
                 "    [2] view a contact detail\n"
@@ -430,15 +470,16 @@ def choose_action() -> int:
                 "    [4] delete a contact\n"
                 "    [5] sync account with Reminders App\n"
                 "    [6] download all contacts\n"
+                "    [7] search\n"
             )
             action = int(action)
         except ValueError as val:
-            print(f"{val}. Please enter an integer [0 ~ 5].")
+            print(f"{val}. Please enter an integer [0 ~ 7].")
             continue
         except EOFError:
             raise EOFError("[Exit Contact Management App]")
         else:
-            if 0 <= action <= 6:
+            if 0 <= action <= 7:
                 print(f"Your contact action: [{action}]")
                 return action
             else:
