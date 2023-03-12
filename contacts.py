@@ -379,10 +379,12 @@ def sync_accounts(user_id: int) -> None:
     password: str = input("Enter password: ")
 
     # call handshake microservice to connect to Reminders App
-    if reminders_middleware.handshake(email, password, user_id) != "Server Error":
+    result: str = reminders_middleware.handshake(email, password, user_id)
+    if result == "Login Successful":
         print("Successful handshake! Now you can access your reminders from Contacts App!\n")
     else:
-        print("Unsuccessful handshake... Please try again.\n")
+        print(f"{result}\n"
+              "Unsuccessful handshake... Please try again.\n")
 
     return
 
